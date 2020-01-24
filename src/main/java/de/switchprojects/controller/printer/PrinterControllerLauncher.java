@@ -21,4 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-rootProject.name = '3dswitch'
+package de.switchprojects.controller.printer;
+
+public final class PrinterControllerLauncher {
+}

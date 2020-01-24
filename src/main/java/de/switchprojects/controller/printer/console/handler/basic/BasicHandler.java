@@ -21,4 +21,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-rootProject.name = '3dswitch'
+package de.switchprojects.controller.printer.console.handler.basic;
+
+import de.switchprojects.controller.printer.console.TerminalConsole;
+import de.switchprojects.controller.printer.console.handler.AbstractHandler;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.logging.LogRecord;
+
+/**
+ * @author Pasqual Koschmieder
+ * @since 1.0
+ */
+public class BasicHandler extends AbstractHandler {
+
+    public BasicHandler(@NotNull TerminalConsole terminalConsole) {
+        super(terminalConsole);
+    }
+
+    @Override
+    public void publish(LogRecord record) {
+        if (isLoggable(record)) {
+            terminalConsole.log(getFormatter().format(record));
+        }
+    }
+
+    @Override
+    public void flush() {
+    }
+
+    @Override
+    public void close() throws SecurityException {
+    }
+}

@@ -21,4 +21,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-rootProject.name = '3dswitch'
+package de.switchprojects.controller.printer.events.annotations;
+
+import de.switchprojects.controller.printer.events.priority.ListenerPriority;
+
+import java.lang.annotation.*;
+
+/**
+ * Used to check if a method in a listener call is an event handler.
+ *
+ * @author Pasqual Koschmieder
+ * @since 1.0
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+@Documented
+public @interface Subscribe {
+
+    /**
+     * @return The priority of the listener which handles the event
+     */
+    ListenerPriority priority() default ListenerPriority.NORMAL;
+}

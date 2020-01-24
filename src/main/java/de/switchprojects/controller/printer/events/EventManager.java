@@ -21,4 +21,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-rootProject.name = '3dswitch'
+package de.switchprojects.controller.printer.events;
+
+import org.jetbrains.annotations.NotNull;
+
+/**
+ * Represents the event manager which is used to call events to the registered listeners.
+ *
+ * @author Pasqual Koschmieder
+ * @since 1.0
+ */
+public interface EventManager {
+
+    /**
+     * Calls an event
+     *
+     * @param event The event which should be called
+     */
+    void callEvent(@NotNull Event event);
+
+    /**
+     * Registers a event listener
+     *
+     * @param listener The listener which should get registered
+     */
+    void registerListener(@NotNull Object listener);
+
+    /**
+     * Unregisters a specific listener
+     *
+     * @param listener The listener which should get unregistered
+     */
+    void unregisterListener(@NotNull Object listener);
+
+    /**
+     * Unregisters all listeners
+     */
+    void unregisterAll();
+}

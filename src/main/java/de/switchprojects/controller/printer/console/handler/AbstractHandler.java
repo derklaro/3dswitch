@@ -21,4 +21,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-rootProject.name = '3dswitch'
+package de.switchprojects.controller.printer.console.handler;
+
+import de.switchprojects.controller.printer.console.TerminalConsole;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.logging.Handler;
+
+/**
+ * @author Pasqual Koschmieder
+ * @since 1.0
+ */
+public abstract class AbstractHandler extends Handler {
+
+    public AbstractHandler(@NotNull TerminalConsole terminalConsole) {
+        this.terminalConsole = terminalConsole;
+    }
+
+    protected final TerminalConsole terminalConsole;
+}

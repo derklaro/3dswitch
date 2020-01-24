@@ -21,4 +21,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-rootProject.name = '3dswitch'
+package de.switchprojects.controller.printer.events;
+
+/**
+ * Represents a cancellable event
+ *
+ * @author Pasqual Koschmieder
+ * @since 1.0
+ */
+public interface Cancellable {
+
+    /**
+     * @return If the current event is cancelled
+     */
+    boolean isCancelled();
+
+    /**
+     * Sets the event cancelled
+     *
+     * @param cancelled If the event should get cancelled
+     */
+    void setCancelled(boolean cancelled);
+}

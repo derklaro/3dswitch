@@ -21,4 +21,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-rootProject.name = '3dswitch'
+package de.switchprojects.controller.printer.console.events;
+
+import de.switchprojects.controller.printer.events.Cancellable;
+import de.switchprojects.controller.printer.events.Event;
+import org.jetbrains.annotations.NotNull;
+
+/**
+ * Gets called when a log line is going to be sent into the console
+ *
+ * @author Pasqual Koschmieder
+ * @since 1.0
+ */
+public class ConsoleLogMessageSentEvent extends Event implements Cancellable {
+
+    public ConsoleLogMessageSentEvent(String logMessage) {
+        this.logMessage = logMessage;
+    }
+
+    private String logMessage;
+
+    private boolean cancelled = false;
+
+    public String getLogMessage() {
+        return logMessage;
+    }
+
+    public void setLogMessage(@NotNull String logMessage) {
+        this.logMessage = logMessage;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return this.cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
+}

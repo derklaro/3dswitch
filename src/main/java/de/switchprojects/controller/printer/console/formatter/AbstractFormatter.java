@@ -21,4 +21,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-rootProject.name = '3dswitch'
+package de.switchprojects.controller.printer.console.formatter;
+
+import de.switchprojects.controller.printer.console.TerminalConsole;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.logging.Formatter;
+
+/**
+ * @author Pasqual Koschmieder
+ * @since 1.0
+ */
+public abstract class AbstractFormatter extends Formatter {
+
+    public AbstractFormatter(TerminalConsole terminalConsole) {
+        this.terminalConsole = terminalConsole;
+    }
+
+    protected final TerminalConsole terminalConsole;
+
+    @NotNull
+    protected StringWriter format(@NotNull Throwable throwable) {
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(stringWriter);
+        throwable.printStackTrace(printWriter);
+        return stringWriter;
+    }
+}

@@ -21,4 +21,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-rootProject.name = '3dswitch'
+package de.switchprojects.controller.printer.events.util;
+
+import de.switchprojects.controller.printer.events.Event;
+import org.jetbrains.annotations.NotNull;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
+/**
+ * Represents a registered listener an the method which is the method itself.
+ *
+ * @author Pasqual Koschmieder
+ * @since 1.0
+ */
+public final class RegisteredListener {
+
+    public RegisteredListener(@NotNull Object listener, @NotNull Method method) {
+        this.listener = listener;
+        this.method = method;
+    }
+
+    private final Object listener;
+
+    private final Method method;
+
+    public void call(@NotNull Event event) throws InvocationTargetException, IllegalAccessException {
+        method.invoke(listener, event);
+    }
+
+    public Method getMethod() {
+        return method;
+    }
+
+    public Object getListener() {
+        return listener;
+    }
+}

@@ -21,4 +21,38 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-rootProject.name = '3dswitch'
+package de.switchprojects.controller.printer.console.events;
+
+import de.switchprojects.controller.printer.events.Cancellable;
+import de.switchprojects.controller.printer.events.Event;
+
+/**
+ * Get's called if a user typed something into the console screen.
+ *
+ * @author Pasqual Koschmieder
+ * @since 1.0
+ */
+public class ConsoleLineReadEvent extends Event implements Cancellable {
+
+    public ConsoleLineReadEvent(String consoleLine) {
+        this.consoleLine = consoleLine;
+    }
+
+    private final String consoleLine;
+
+    private boolean cancelled = false;
+
+    public String getConsoleLine() {
+        return consoleLine;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return this.cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
+}

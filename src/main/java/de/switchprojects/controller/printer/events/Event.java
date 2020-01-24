@@ -21,4 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-rootProject.name = '3dswitch'
+package de.switchprojects.controller.printer.events;
+
+/**
+ * Dummy class which represents an callable event.
+ *
+ * @author Pasqual Koschmieder
+ * @since 1.0
+ */
+public class Event {
+}

@@ -21,4 +21,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-rootProject.name = '3dswitch'
+package de.switchprojects.controller.printer.events.priority;
+
+/**
+ * Represents the priority of a listener.
+ *
+ * {@link #FIRST} this listener get called before all other listeners of the event.
+ * {@link #NORMAL} is the normal priority of a listener.
+ * {@link #LAST} this listener get called after all other listeners of the event.
+ *
+ * @author Pasqual Koschmieder
+ * @since 1.0
+ */
+public enum ListenerPriority {
+
+    FIRST((byte) -64),
+
+    SECOND((byte) -32),
+
+    MONITOR((byte) -1),
+
+    NORMAL((byte) 0),
+
+    PENULTIMATE((byte) 32),
+
+    LAST((byte) 64);
+
+    ListenerPriority(byte priorityInJava) {
+        this.priority = priorityInJava;
+    }
+
+    private final byte priority;
+
+    public byte getPriority() {
+        return priority;
+    }
+}

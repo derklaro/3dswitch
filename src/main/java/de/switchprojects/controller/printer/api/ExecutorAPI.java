@@ -21,4 +21,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-rootProject.name = '3dswitch'
+package de.switchprojects.controller.printer.api;
+
+import de.switchprojects.controller.printer.events.EventManager;
+import org.jetbrains.annotations.NotNull;
+
+/**
+ * The global api which represents the full system functionality.
+ *
+ * @author Pasqual Koschmieder
+ * @since 1.0
+ */
+public interface ExecutorAPI {
+
+    /**
+     * @return The current event manager of the cloud system
+     */
+    @NotNull
+    EventManager getEventManager();
+}
