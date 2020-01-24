@@ -21,46 +21,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.switchprojects.controller.printer.api;
+package de.switchprojects.controller.printer.commands.source;
 
-import de.switchprojects.controller.printer.commands.CommandMap;
-import de.switchprojects.controller.printer.events.EventManager;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * The global api of the system
+ * Represents any source of a command, for example the console source.
  *
  * @author Pasqual Koschmieder
  * @since 1.0
  */
-public final class GlobalAPI {
+public interface CommandSource {
 
     /**
-     * We let nobody see the constructor.
+     * Sends a message to the command sender
      *
-     * @throws UnsupportedOperationException If someone tries to instantiate this class using reflections
+     * @param message The message which should get sent
      */
-    private GlobalAPI() {
-        throw new UnsupportedOperationException();
-    }
+    void sendMessage(@NotNull String message);
 
-    public static void setExecutorAPI(ExecutorAPI executor) {
-        if (executorAPI != null) {
-            throw new UnsupportedOperationException("Cannot redefine singleton api");
-        }
-
-        executorAPI = executor;
-    }
-
-    private static ExecutorAPI executorAPI;
-
+    /**
+     * @return The name of the command sender
+     */
     @NotNull
-    public static EventManager getEventManager() {
-        return executorAPI.getEventManager();
-    }
-
-    @NotNull
-    public static CommandMap getCommandMap() {
-        return executorAPI.getCommandMap();
-    }
+    String getName();
 }

@@ -21,46 +21,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.switchprojects.controller.printer.api;
+package de.switchprojects.controller.printer.commands.basic.source;
 
-import de.switchprojects.controller.printer.commands.CommandMap;
-import de.switchprojects.controller.printer.events.EventManager;
+import de.switchprojects.controller.printer.commands.source.CommandSource;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * The global api of the system
+ * Represents the console as a command source.
  *
  * @author Pasqual Koschmieder
  * @since 1.0
  */
-public final class GlobalAPI {
+public class ConsoleCommandSource implements CommandSource {
 
-    /**
-     * We let nobody see the constructor.
-     *
-     * @throws UnsupportedOperationException If someone tries to instantiate this class using reflections
-     */
-    private GlobalAPI() {
-        throw new UnsupportedOperationException();
+    public static final CommandSource INSTANCE = new ConsoleCommandSource();
+
+    @Override
+    public void sendMessage(@NotNull String message) {
+        System.out.println(message);
     }
 
-    public static void setExecutorAPI(ExecutorAPI executor) {
-        if (executorAPI != null) {
-            throw new UnsupportedOperationException("Cannot redefine singleton api");
-        }
-
-        executorAPI = executor;
-    }
-
-    private static ExecutorAPI executorAPI;
-
-    @NotNull
-    public static EventManager getEventManager() {
-        return executorAPI.getEventManager();
-    }
-
-    @NotNull
-    public static CommandMap getCommandMap() {
-        return executorAPI.getCommandMap();
+    @Override
+    public @NotNull String getName() {
+        return "ConsoleCommandSource";
     }
 }

@@ -23,5 +23,11 @@
  */
 package de.switchprojects.controller.printer;
 
+import org.jetbrains.annotations.NotNull;
+
 public final class PrinterControllerLauncher {
+
+    public static synchronized void main(@NotNull String[] args) {
+
+    }
 }

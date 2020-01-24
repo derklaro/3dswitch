@@ -23,6 +23,7 @@
  */
 package de.switchprojects.controller.printer.api;
 
+import de.switchprojects.controller.printer.commands.CommandMap;
 import de.switchprojects.controller.printer.events.EventManager;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,6 +38,10 @@ public interface ExecutorAPI {
     /**
      * @return The current event manager of the cloud system
      */
-    @NotNull
-    EventManager getEventManager();
+    @NotNull EventManager getEventManager();
+
+    /**
+     * @return The command map used by the system
+     */
+    @NotNull CommandMap getCommandMap();
 }

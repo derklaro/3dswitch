@@ -21,46 +21,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.switchprojects.controller.printer.api;
+package de.switchprojects.controller.printer.commands;
 
-import de.switchprojects.controller.printer.commands.CommandMap;
-import de.switchprojects.controller.printer.events.EventManager;
+import de.switchprojects.controller.printer.commands.source.CommandSource;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * The global api of the system
+ * Represents a command which can get executed from the console or any other source.
  *
  * @author Pasqual Koschmieder
  * @since 1.0
  */
-public final class GlobalAPI {
+public interface Command {
 
     /**
-     * We let nobody see the constructor.
-     *
-     * @throws UnsupportedOperationException If someone tries to instantiate this class using reflections
+     * @return The main name of the command
      */
-    private GlobalAPI() {
-        throw new UnsupportedOperationException();
-    }
-
-    public static void setExecutorAPI(ExecutorAPI executor) {
-        if (executorAPI != null) {
-            throw new UnsupportedOperationException("Cannot redefine singleton api");
-        }
-
-        executorAPI = executor;
-    }
-
-    private static ExecutorAPI executorAPI;
-
     @NotNull
-    public static EventManager getEventManager() {
-        return executorAPI.getEventManager();
-    }
+    String getCommandName();
 
+    /**
+     * @return All aliases of the command which can get used
+     */
     @NotNull
-    public static CommandMap getCommandMap() {
-        return executorAPI.getCommandMap();
-    }
+    String[] getAliases();
+
+    /**
+     * @return The description of the command
+     */
+    @NotNull
+    String getDescription();
+
+    /**
+     * Executes the command
+     *
+     * @param source The source from where the command got called
+     * @param commandLine The complete command line typed by the user
+     * @param strings All parsed arguments from the command line
+     */
+    void execute(@NotNull CommandSource source, @NotNull String commandLine, @NotNull String[] strings);
 }

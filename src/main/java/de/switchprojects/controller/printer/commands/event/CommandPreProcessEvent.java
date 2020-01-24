@@ -21,46 +21,46 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.switchprojects.controller.printer.api;
+package de.switchprojects.controller.printer.commands.event;
 
-import de.switchprojects.controller.printer.commands.CommandMap;
-import de.switchprojects.controller.printer.events.EventManager;
-import org.jetbrains.annotations.NotNull;
+import de.switchprojects.controller.printer.commands.Command;
+import de.switchprojects.controller.printer.events.Cancellable;
+import de.switchprojects.controller.printer.events.Event;
 
 /**
- * The global api of the system
+ * Gets called before a command get called.
  *
  * @author Pasqual Koschmieder
  * @since 1.0
  */
-public final class GlobalAPI {
+public class CommandPreProcessEvent extends Event implements Cancellable {
 
-    /**
-     * We let nobody see the constructor.
-     *
-     * @throws UnsupportedOperationException If someone tries to instantiate this class using reflections
-     */
-    private GlobalAPI() {
-        throw new UnsupportedOperationException();
+    public CommandPreProcessEvent(Command command, String[] strings) {
+        this.command = command;
+        this.strings = strings;
     }
 
-    public static void setExecutorAPI(ExecutorAPI executor) {
-        if (executorAPI != null) {
-            throw new UnsupportedOperationException("Cannot redefine singleton api");
-        }
+    private Command command;
 
-        executorAPI = executor;
+    private String[] strings;
+
+    public Command getCommand() {
+        return command;
     }
 
-    private static ExecutorAPI executorAPI;
-
-    @NotNull
-    public static EventManager getEventManager() {
-        return executorAPI.getEventManager();
+    public String[] getStrings() {
+        return strings;
     }
 
-    @NotNull
-    public static CommandMap getCommandMap() {
-        return executorAPI.getCommandMap();
+    private boolean cancelled = false;
+
+    @Override
+    public boolean isCancelled() {
+        return this.cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
     }
 }

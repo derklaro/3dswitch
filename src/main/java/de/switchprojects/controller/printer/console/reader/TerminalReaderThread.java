@@ -24,6 +24,7 @@
 package de.switchprojects.controller.printer.console.reader;
 
 import de.switchprojects.controller.printer.api.GlobalAPI;
+import de.switchprojects.controller.printer.commands.basic.source.ConsoleCommandSource;
 import de.switchprojects.controller.printer.console.TerminalConsole;
 import de.switchprojects.controller.printer.console.events.ConsoleLineReadEvent;
 import org.jetbrains.annotations.NotNull;
@@ -62,7 +63,10 @@ public final class TerminalReaderThread extends Thread {
                         return;
                     }
 
-                    // TODO: Execute command line with command manager
+                    if (!GlobalAPI.getCommandMap().dispatchCommand(ConsoleCommandSource.INSTANCE, line)) {
+                        System.out.println("Unknown command. Type \"help\" to see a list of available commands");
+                    }
+
                     line = terminalConsole.readLine(PROMPT);
                 }
             } catch (final Throwable throwable) {

@@ -21,46 +21,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.switchprojects.controller.printer.api;
+package de.switchprojects.controller.printer.commands.basic;
 
-import de.switchprojects.controller.printer.commands.CommandMap;
-import de.switchprojects.controller.printer.events.EventManager;
+import de.switchprojects.controller.printer.commands.Command;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * The global api of the system
+ * A basic implementation of a command which is callable
  *
  * @author Pasqual Koschmieder
  * @since 1.0
  */
-public final class GlobalAPI {
+public abstract class BasicCommand implements Command {
 
-    /**
-     * We let nobody see the constructor.
-     *
-     * @throws UnsupportedOperationException If someone tries to instantiate this class using reflections
-     */
-    private GlobalAPI() {
-        throw new UnsupportedOperationException();
+    public BasicCommand(String commandName, String[] aliases, String description) {
+        this.commandName = commandName;
+        this.aliases = aliases;
+        this.description = description;
     }
 
-    public static void setExecutorAPI(ExecutorAPI executor) {
-        if (executorAPI != null) {
-            throw new UnsupportedOperationException("Cannot redefine singleton api");
-        }
+    private final String commandName;
 
-        executorAPI = executor;
+    private final String[] aliases;
+
+    private final String description;
+
+    @Override
+    public @NotNull String getCommandName() {
+        return this.commandName;
     }
 
-    private static ExecutorAPI executorAPI;
-
-    @NotNull
-    public static EventManager getEventManager() {
-        return executorAPI.getEventManager();
+    @Override
+    public @NotNull String[] getAliases() {
+        return this.aliases;
     }
 
-    @NotNull
-    public static CommandMap getCommandMap() {
-        return executorAPI.getCommandMap();
+    @Override
+    public @NotNull String getDescription() {
+        return this.description;
     }
 }
