@@ -29,6 +29,9 @@ import de.switchprojects.controller.printer.database.object.DatabaseObjectToken;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
+import java.util.function.Function;
+
 /**
  * Represents a database connection
  *
@@ -82,6 +85,17 @@ public interface DatabaseDriver {
      */
     @Nullable
     <T> T get(@NotNull DatabaseObjectToken<T> databaseObjectToken);
+
+    /**
+     * Gets all objects from a specific table in the database
+     *
+     * @param table The table in which the objects are located
+     * @param mapper The mapper which creates the objects from the bytes of the database
+     * @param <T> The type of the object in the database after the map
+     * @return A collection of all objects from a specific table in the database
+     */
+    @NotNull
+    <T> Collection<T> getAll(@NotNull String table, @NotNull Function<byte[], T> mapper);
 
     /**
      * Deletes an object from the database

@@ -21,44 +21,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.switchprojects.controller.printer.queue;
+package de.switchprojects.controller.printer.util;
 
-import de.switchprojects.controller.printer.octoprint.OctoPrintHelper;
-import de.switchprojects.controller.printer.queue.object.PrintableObject;
-import de.switchprojects.controller.printer.util.BaseUtil;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.concurrent.BlockingDeque;
-import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Represents the current loaded queue of all objects which are going to get printed
+ * Some basic util methods to use the system
  *
  * @author Pasqual Koschmieder
  * @since 1.0
  */
-public final class PrintQueue extends Thread {
+public final class BaseUtil {
 
-    private static final BlockingDeque<PrintableObject> QUEUE = new LinkedBlockingDeque<>();
+    private BaseUtil() {
+        throw new UnsupportedOperationException();
+    }
 
-    @Override
-    public void run() {
-        while (!Thread.interrupted()) {
-            try {
-                PrintableObject next = QUEUE.take();
+    public static void sleep(@NotNull TimeUnit timeUnit, long time) {
+        Validate.assertBigger(time, 0);
+        Validate.assertNotNull(timeUnit, "Required time unit which is non-null");
 
-                if (OctoPrintHelper.isPrintJobRunning()) {
-                    QUEUE.addFirst(next);
-                    BaseUtil.sleep(TimeUnit.SECONDS, 30);
-                    continue;
-                }
-
-                System.out.println("Next object polled from queue and ready to print: " + next.getKey());
-                OctoPrintHelper.print(next);
-                System.out.println("Started print job successfully");
-            } catch (final InterruptedException ex) {
-                ex.printStackTrace();
-            }
+        try {
+            timeUnit.sleep(time);
+        } catch (final InterruptedException ex) {
+            ex.printStackTrace();
         }
     }
 }

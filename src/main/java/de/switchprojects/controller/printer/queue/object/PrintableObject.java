@@ -24,6 +24,8 @@
 package de.switchprojects.controller.printer.queue.object;
 
 import de.switchprojects.controller.printer.database.object.DatabaseObject;
+import de.switchprojects.controller.printer.user.User;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents an object which can be printed and written into the database
@@ -33,5 +35,28 @@ import de.switchprojects.controller.printer.database.object.DatabaseObject;
  */
 public abstract class PrintableObject implements DatabaseObject {
 
+    public PrintableObject(Long requestTime) {
+        this.requestTime = requestTime;
+    }
 
+    private final long requestTime;
+
+    /**
+     * @return The user which has requested the print
+     */
+    @NotNull
+    public abstract User getUser();
+
+    /**
+     * @return The path were the file to print is located
+     */
+    @NotNull
+    public abstract String getPath();
+
+    /**
+     * @return The when the print got requested
+     */
+    public final long getRequestTime() {
+        return requestTime;
+    }
 }

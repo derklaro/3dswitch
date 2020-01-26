@@ -21,48 +21,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-buildscript {
-    repositories {
-        mavenCentral()
-    }
+package de.switchprojects.controller.printer.user;
 
-    dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:5.2.0'
-    }
-}
+/**
+ * The type of an user object
+ *
+ * @author Pasqual Koschmieder
+ * @since 1.0
+ */
+public enum UserType {
 
-plugins {
-    id 'java'
-}
+    /**
+     * The user is from the web interface and queued it from the web request
+     */
+    WEB,
 
-apply plugin: 'com.github.johnrengelman.shadow'
-
-tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
-}
-
-group 'de.switchprojects'
-version '1.0'
-
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
-repositories {
-    mavenCentral()
-    jcenter()
-
-    maven {
-        name = 'reformcloud'
-        url = 'https://repo.reformcloud.systems/'
-    }
-}
-
-dependencies {
-    compile 'com.h2database:h2:1.4.200'
-    compile 'eu.printingin3d.javascad:javascad:0.9.2.2'
-    compile 'org.jline:jline:3.13.2'
-    compile 'io.javalin:javalin:3.7.0'
-    compile 'org.jetbrains:annotations:16.0.2'
-    compile 'net.dv8tion:JDA:4.1.1_101'
-    compile 'org.octoprint.api:octoprint-java-lib:0.0.10' // using java 8 build of Pasqual instead of outdated Java 7 version
+    /**
+     * The user is from the discord server and has uploaded a file from there
+     */
+    DISCORD
 }
