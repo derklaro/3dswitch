@@ -35,6 +35,14 @@ plugins {
     id 'java'
 }
 
+jar {
+    manifest {
+        attributes 'Main-Class': 'de.switchprojects.controller.printer.PrinterControllerLauncher'
+        attributes 'Implementation-Version': '1.0'
+        attributes 'Specification-Version': 'SNAPSHOT'
+    }
+}
+
 apply plugin: 'com.github.johnrengelman.shadow'
 
 tasks.withType(JavaCompile) {
