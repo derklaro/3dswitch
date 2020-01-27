@@ -39,6 +39,12 @@ public final class ThreadSupport {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Sleeps the given time in the given time unit
+     *
+     * @param timeUnit The time unit in which the thread should sleep
+     * @param time     The time how long the current thread should sleep
+     */
     public static void sleep(@NotNull TimeUnit timeUnit, long time) {
         Validate.assertBigger(time, 0);
         Validate.assertNotNull(timeUnit, "Required time unit which is non-null");

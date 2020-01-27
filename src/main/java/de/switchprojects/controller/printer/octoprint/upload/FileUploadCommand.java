@@ -69,7 +69,7 @@ public class FileUploadCommand extends OctoPrintCommand {
                 writer.println();
 
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
-                    for (String line; (line = reader.readLine()) != null;) {
+                    for (String line; (line = reader.readLine()) != null; ) {
                         writer.println(line);
                     }
                 }

@@ -53,7 +53,7 @@ public final class Slice3rSlicer {
 
         String objectPath = Paths.get(object.getPath()).toFile().getAbsolutePath();
 
-        String[] command = new String[] {
+        String[] command = new String[]{
                 "sh",
                 new File("Slic3r").getAbsolutePath(),
                 objectPath,

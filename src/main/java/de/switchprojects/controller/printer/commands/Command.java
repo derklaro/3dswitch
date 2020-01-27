@@ -55,9 +55,9 @@ public interface Command {
     /**
      * Executes the command
      *
-     * @param source The source from where the command got called
+     * @param source      The source from where the command got called
      * @param commandLine The complete command line typed by the user
-     * @param strings All parsed arguments from the command line
+     * @param strings     All parsed arguments from the command line
      */
     void execute(@NotNull CommandSource source, @NotNull String commandLine, @NotNull String[] strings);
 }

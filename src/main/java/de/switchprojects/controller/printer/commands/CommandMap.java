@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Represents a command map which holds all commands and dispatches them when a user typed a command
  * into the console.
- *
+ * <p>
  * If you want to register a command you may simply use:
  * <pre>{@code
  * public static void main(String... args) {
@@ -62,7 +62,7 @@ public interface CommandMap {
     /**
      * Dispatches a specific command
      *
-     * @param source The command source from which the command gets called
+     * @param source      The command source from which the command gets called
      * @param commandLine The command line which was typed by the user into the console
      * @return If the map contained any command which matches to the command line
      */

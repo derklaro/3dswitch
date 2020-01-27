@@ -33,14 +33,14 @@ import java.util.logging.Logger;
 /**
  * The console which is used for the default read of the console input and for the print of console
  * outputs.
- *
+ * <p>
  * To read a line with no prompt you can use:
  * <pre>{@code
  * public static void main(String... args) {
  *     String line = TerminalConsole#readLine(null);
  * }
  * }</pre>
- *
+ * <p>
  * If you need a command line prompt to show the user for example what he has to type:
  * <pre>{@code
  * public static void main(String... args) {
@@ -49,9 +49,8 @@ import java.util.logging.Logger;
  * }</pre>
  * Here we have used the command prompt {@code >}.
  *
- * @see de.switchprojects.controller.printer.console.basic.BasicTerminalConsole
- *
  * @author Pasqual Koschmieder
+ * @see de.switchprojects.controller.printer.console.basic.BasicTerminalConsole
  * @since 1.0
  */
 public abstract class TerminalConsole extends Logger {
@@ -63,7 +62,7 @@ public abstract class TerminalConsole extends Logger {
      * and with useParentHandlers set to true.
      *
      * @throws java.util.MissingResourceException if the resourceBundleName is non-null and
-     *                                  no corresponding resource can be found.
+     *                                            no corresponding resource can be found.
      */
     public TerminalConsole() {
         super("SimpleTerminalLogger", null);
@@ -87,8 +86,8 @@ public abstract class TerminalConsole extends Logger {
     /**
      * Logs a message through the line reader into the console
      *
-     * @see #getLineReader()
      * @param message The message which should get sent
+     * @see #getLineReader()
      */
     public abstract void log(@NotNull String message);
 

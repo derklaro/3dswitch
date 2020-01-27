@@ -39,7 +39,7 @@ import java.nio.charset.StandardCharsets;
 /**
  * Util class for console reading. It's allows you to build a new terminal and the LineReader for
  * a console without any big messy code:
- *
+ * <p>
  * Creating a line reader with this class looks like this:
  * <pre>{@code
  * public static void main(String... args) {

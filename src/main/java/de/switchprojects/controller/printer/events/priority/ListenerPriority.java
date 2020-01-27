@@ -25,7 +25,7 @@ package de.switchprojects.controller.printer.events.priority;
 
 /**
  * Represents the priority of a listener.
- *
+ * <p>
  * {@link #FIRST} this listener get called before all other listeners of the event.
  * {@link #NORMAL} is the normal priority of a listener.
  * {@link #LAST} this listener get called after all other listeners of the event.

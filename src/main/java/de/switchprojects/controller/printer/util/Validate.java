@@ -37,30 +37,65 @@ public final class Validate {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Validates that the given long is bigger than the required minimum
+     *
+     * @param current The current long which should be greater than the minimum
+     * @param min     The minimum length of the long
+     * @throws AssertionError If the current long is smaller or equal to the minimum
+     */
     public static void assertBigger(long current, long min) {
         if (current < min) {
             throw new AssertionError("Current value " + current + " is not bigger than " + min);
         }
     }
 
+    /**
+     * Asserts that the given object is non null
+     *
+     * @param o       The object which should get checked
+     * @param message The message which should be in the exception as detail message
+     * @throws AssertionError If the given object is null
+     */
     public static void assertNotNull(Object o, @NotNull String message) {
         if (o == null) {
             throw new AssertionError(message);
         }
     }
 
+    /**
+     * Asserts that the given object is null
+     *
+     * @param o       The object which should get checked
+     * @param message The message which should be in the exception as detail message
+     * @throws AssertionError If the given object is non-null
+     */
     public static void assertNull(Object o, @NotNull String message) {
         if (o != null) {
             throw new AssertionError(message);
         }
     }
 
+    /**
+     * Asserts that the given long equals to the expected one
+     *
+     * @param current  The current long which should equal to the expected
+     * @param expected The expected long
+     * @throws AssertionError If the current long does not equal to the expected one
+     */
     public static void assertEquals(long current, long expected) {
         if (current != expected) {
             throw new AssertionError("Expected " + expected + " but received " + current);
         }
     }
 
+    /**
+     * Asserts that the given boolean equals to the expected one
+     *
+     * @param current  The current boolean which should equal to the expected
+     * @param expected The expected boolean
+     * @throws AssertionError If the current boolean does not equal to the expected one
+     */
     public static void assertEquals(boolean current, boolean expected) {
         if (current != expected) {
             throw new AssertionError("Expected " + expected + " but received " + current);
