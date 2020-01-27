@@ -21,13 +21,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.switchprojects.controller.printer;
+package de.switchprojects.controller.printer.util;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class PrinterControllerLauncher {
+import java.util.concurrent.TimeUnit;
 
-    public static synchronized void main(@NotNull String[] args) {
+/**
+ * Some basic util methods to use the system
+ *
+ * @author Pasqual Koschmieder
+ * @since 1.0
+ */
+public final class ThreadSupport {
 
+    private ThreadSupport() {
+        throw new UnsupportedOperationException();
+    }
+
+    public static void sleep(@NotNull TimeUnit timeUnit, long time) {
+        Validate.assertBigger(time, 0);
+        Validate.assertNotNull(timeUnit, "Required time unit which is non-null");
+
+        try {
+            timeUnit.sleep(time);
+        } catch (final InterruptedException ex) {
+            ex.printStackTrace();
+        }
     }
 }

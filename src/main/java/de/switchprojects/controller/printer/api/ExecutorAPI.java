@@ -24,8 +24,12 @@
 package de.switchprojects.controller.printer.api;
 
 import de.switchprojects.controller.printer.commands.CommandMap;
+import de.switchprojects.controller.printer.database.DatabaseDriver;
 import de.switchprojects.controller.printer.events.EventManager;
+import de.switchprojects.controller.printer.user.UserManagement;
+import de.switchprojects.controller.printer.user.object.UserType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The global api which represents the full system functionality.
@@ -44,4 +48,17 @@ public interface ExecutorAPI {
      * @return The command map used by the system
      */
     @NotNull CommandMap getCommandMap();
+
+    /**
+     * @return The current in-use database
+     */
+    @NotNull DatabaseDriver getDatabase();
+
+    /**
+     * Get the user management which is assigned to the user type
+     *
+     * @param userType The type of the user management
+     * @return The user management which handles the specified type or {@code null} if the type is not handled
+     */
+    @Nullable UserManagement getUserManagement(@NotNull UserType userType);
 }

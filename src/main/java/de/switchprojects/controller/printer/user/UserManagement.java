@@ -21,61 +21,46 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.switchprojects.controller.printer.queue.object;
+package de.switchprojects.controller.printer.user;
 
-import de.switchprojects.controller.printer.database.object.DatabaseObject;
 import de.switchprojects.controller.printer.user.object.User;
+import de.switchprojects.controller.printer.user.object.UserType;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Represents an object which can be printed and written into the database
+ * Represents the management for the {@link User}s
  *
  * @author Pasqual Koschmieder
  * @since 1.0
  */
-public abstract class PrintableObject implements DatabaseObject {
-
-    public PrintableObject(Long requestTime) {
-        this.requestTime = requestTime;
-    }
-
-    private final long requestTime;
+public interface UserManagement {
 
     /**
-     * @return The user which has requested the print
+     * Retrieves or creates a user by the the unique id of him
+     *
+     * @param uniqueID The unique id of the user
+     * @return The user of the database or a newly created user
      */
     @NotNull
-    public abstract User getUser();
+    User getUserByID(@NotNull Long uniqueID);
 
     /**
-     * @return The path were the file to print is located
+     * Updates a specific user in the database
+     *
+     * @param user The user which should get updated
+     */
+    void updateUser(@NotNull User user);
+
+    /**
+     * Deletes a user completely
+     *
+     * @param userID The unique id of the user
+     */
+    void deleteUser(@NotNull Long userID);
+
+    /**
+     * @return The type of user which this manager is handling
      */
     @NotNull
-    public abstract String getPath();
-
-    /**
-     * Changes the path of the file location (for example after the slice)
-     *
-     * @param path The new path where the file is located
-     */
-    public abstract void setPath(@NotNull String path);
-
-    /**
-     * @return If the current object is sliced
-     */
-    public abstract boolean isSliced();
-
-    /**
-     * Sets the sliced status of the file
-     *
-     * @param sliced If the current object is sliced
-     */
-    public abstract void setSliced(boolean sliced);
-
-    /**
-     * @return The when the print got requested
-     */
-    public final long getRequestTime() {
-        return requestTime;
-    }
+    UserType getHandlingType();
 }

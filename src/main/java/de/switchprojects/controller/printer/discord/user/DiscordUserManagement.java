@@ -21,61 +21,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.switchprojects.controller.printer.queue.object;
+package de.switchprojects.controller.printer.discord.user;
 
-import de.switchprojects.controller.printer.database.object.DatabaseObject;
+import de.switchprojects.controller.printer.api.GlobalAPI;
+import de.switchprojects.controller.printer.database.object.DatabaseObjectToken;
+import de.switchprojects.controller.printer.user.UserManagement;
 import de.switchprojects.controller.printer.user.object.User;
+import de.switchprojects.controller.printer.user.object.UserType;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Represents an object which can be printed and written into the database
+ * Manges the user which are connected via discord
  *
  * @author Pasqual Koschmieder
  * @since 1.0
  */
-public abstract class PrintableObject implements DatabaseObject {
+public class DiscordUserManagement implements UserManagement {
 
-    public PrintableObject(Long requestTime) {
-        this.requestTime = requestTime;
+    public static final String TABLE_NAME = "discord_users";
+
+    @Override
+    public @NotNull User getUserByID(@NotNull Long uniqueID) {
+        User user = GlobalAPI.getDatabase().getOrDefault(DatabaseObjectToken.newToken(DiscordUser.MAPPER,
+                Long.toString(uniqueID), TABLE_NAME), new DiscordUser(uniqueID));
+        return user == null /* should never happen */ ? new DiscordUser(uniqueID) : user;
     }
 
-    private final long requestTime;
+    @Override
+    public void updateUser(@NotNull User user) {
+        GlobalAPI.getDatabase().update(user);
+    }
 
-    /**
-     * @return The user which has requested the print
-     */
-    @NotNull
-    public abstract User getUser();
+    @Override
+    public void deleteUser(@NotNull Long userID) {
+        GlobalAPI.getDatabase().deleteFromTable(TABLE_NAME, Long.toString(userID));
+    }
 
-    /**
-     * @return The path were the file to print is located
-     */
-    @NotNull
-    public abstract String getPath();
-
-    /**
-     * Changes the path of the file location (for example after the slice)
-     *
-     * @param path The new path where the file is located
-     */
-    public abstract void setPath(@NotNull String path);
-
-    /**
-     * @return If the current object is sliced
-     */
-    public abstract boolean isSliced();
-
-    /**
-     * Sets the sliced status of the file
-     *
-     * @param sliced If the current object is sliced
-     */
-    public abstract void setSliced(boolean sliced);
-
-    /**
-     * @return The when the print got requested
-     */
-    public final long getRequestTime() {
-        return requestTime;
+    @Override
+    public @NotNull UserType getHandlingType() {
+        return UserType.DISCORD;
     }
 }

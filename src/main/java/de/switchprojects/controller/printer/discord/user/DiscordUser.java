@@ -21,64 +21,64 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.switchprojects.controller.printer.queue.basic;
+package de.switchprojects.controller.printer.discord.user;
 
-import de.switchprojects.controller.printer.queue.object.PrintableObject;
-import de.switchprojects.controller.printer.user.User;
+import de.switchprojects.controller.printer.user.object.User;
+import de.switchprojects.controller.printer.user.object.UserType;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
+import java.util.function.Function;
 
 /**
- * Represents a basic implementation of a print job
+ * Represents a default discord user
  *
  * @author Pasqual Koschmieder
  * @since 1.0
  */
-public class BasicDatabaseObject extends PrintableObject {
+public class DiscordUser implements User {
 
-    public BasicDatabaseObject(Long userID, Long time, User user, String path) {
-        super(time == null ? System.currentTimeMillis() : time);
-        this.userID = userID;
-        this.user = user;
-        this.path = path;
+    public static final Function<ObjectInputStream, User> MAPPER = stream -> {
+        try {
+            return new DiscordUser(stream.readLong());
+        } catch (final IOException ex) {
+            ex.printStackTrace();
+        }
+
+        return null;
+    };
+
+    public DiscordUser(long id) {
+        this.id = id;
     }
 
-    private final Long userID;
-
-    private final User user;
-
-    private final String path;
+    private final long id;
 
     @Override
-    public @NotNull User getUser() {
-        return this.user;
+    public UserType getUserType() {
+        return UserType.DISCORD;
     }
 
     @Override
-    public @NotNull String getPath() {
-        return this.path;
+    public Long getUniqueID() {
+        return this.id;
     }
 
     @Override
     public @NotNull String getKey() {
-        return Long.toString(super.getRequestTime());
+        return Long.toString(getUniqueID());
     }
 
     @Override
     public @NotNull String getTable() {
-        return "jobs";
+        return DiscordUserManagement.TABLE_NAME;
     }
 
     @Override
     public @NotNull byte[] serialize() {
         try (ByteArrayOutputStream stream = new ByteArrayOutputStream();
              ObjectOutputStream objectOutputStream = new ObjectOutputStream(stream)) {
-            objectOutputStream.writeObject(this.user);
-            objectOutputStream.writeLong(this.userID);
-            objectOutputStream.writeLong(getRequestTime());
-            objectOutputStream.writeUTF(this.path);
-
+            objectOutputStream.writeLong(this.id);
             return stream.toByteArray();
         } catch (final IOException ex) {
             ex.printStackTrace();

@@ -111,14 +111,14 @@ public class H2DatabaseDriver implements DatabaseDriver {
     }
 
     @Override
-    public <T> @Nullable T get(@NotNull DatabaseObjectToken<T> databaseObjectToken) {
+    public <T> @Nullable T getOrDefault(@NotNull DatabaseObjectToken<T> databaseObjectToken, @Nullable T def) {
         try (PreparedStatement statement = connection.prepareStatement("SELECT `value` FROM ? WHERE `key` = ?")) {
             statement.setString(1, databaseObjectToken.getTable());
             statement.setString(2, databaseObjectToken.getKey());
 
             ResultSet resultSet = statement.executeQuery();
             if (!resultSet.next()) {
-                return null;
+                return def;
             }
 
             try (ObjectInputStream stream = new ObjectInputStream(new ByteArrayInputStream(resultSet.getBytes("value")))) {
@@ -130,7 +130,7 @@ public class H2DatabaseDriver implements DatabaseDriver {
             ex.printStackTrace();
         }
 
-        return null;
+        return def;
     }
 
     @Override
@@ -167,6 +167,19 @@ public class H2DatabaseDriver implements DatabaseDriver {
             statement.executeUpdate();
         } catch (final SQLException ex) {
             ex.printStackTrace();
+        }
+    }
+
+    @Override
+    public void close() {
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (final SQLException ex) {
+                ex.printStackTrace();
+            }
+
+            connection = null;
         }
     }
 }

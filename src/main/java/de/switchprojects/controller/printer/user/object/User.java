@@ -21,23 +21,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.switchprojects.controller.printer.user;
+package de.switchprojects.controller.printer.user.object;
+
+import de.switchprojects.controller.printer.database.object.DatabaseObject;
 
 /**
- * The type of an user object
+ * Represents a user object
  *
  * @author Pasqual Koschmieder
  * @since 1.0
  */
-public enum UserType {
+public interface User extends DatabaseObject {
 
     /**
-     * The user is from the web interface and queued it from the web request
+     * @return The type of the user
      */
-    WEB,
+    UserType getUserType();
 
     /**
-     * The user is from the discord server and has uploaded a file from there
+     * @return The uniqueID of the the user
      */
-    DISCORD
+    Long getUniqueID();
 }

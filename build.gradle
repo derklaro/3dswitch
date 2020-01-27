@@ -37,7 +37,7 @@ plugins {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'de.switchprojects.controller.printer.PrinterControllerLauncher'
+        attributes 'Main-Class': 'de.switchprojects.controller.printer.PrinterController'
         attributes 'Implementation-Version': '1.0'
         attributes 'Specification-Version': 'SNAPSHOT'
     }

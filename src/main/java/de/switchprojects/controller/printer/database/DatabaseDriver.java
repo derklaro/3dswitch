@@ -80,28 +80,44 @@ public interface DatabaseDriver {
      * Gets an object from the database
      *
      * @param databaseObjectToken The token to deserialize the object from the database
-     * @param <T> The type of the object which gets deserialize from the database
+     * @param <T>                 The type of the object which gets deserialize from the database
      * @return The deserialize object from the database
      */
     @Nullable
-    <T> T get(@NotNull DatabaseObjectToken<T> databaseObjectToken);
+    default <T> T get(@NotNull DatabaseObjectToken<T> databaseObjectToken) {
+        return getOrDefault(databaseObjectToken, null);
+    }
+
+    /**
+     * Gets a value from the database or the default value if the key does not exists
+     *
+     * @param databaseObjectToken The token for the database object to load it
+     * @param def                 The defined value which is used if the key does not exists
+     * @param <T>                 The type of the object which gets deserialize from the database
+     * @return The deserialize object from the database or the default one
+     */
+    @Nullable <T> T getOrDefault(@NotNull DatabaseObjectToken<T> databaseObjectToken, @Nullable T def);
 
     /**
      * Gets all objects from a specific table in the database
      *
-     * @param table The table in which the objects are located
+     * @param table  The table in which the objects are located
      * @param mapper The mapper which creates the objects from the bytes of the database
-     * @param <T> The type of the object in the database after the map
+     * @param <T>    The type of the object in the database after the map
      * @return A collection of all objects from a specific table in the database
      */
-    @NotNull
-    <T> Collection<T> getAll(@NotNull String table, @NotNull Function<byte[], T> mapper);
+    @NotNull <T> Collection<T> getAll(@NotNull String table, @NotNull Function<byte[], T> mapper);
 
     /**
      * Deletes an object from the database
      *
      * @param table The table name from which the object should get deleted
-     * @param key The key of the database which should get deleted
+     * @param key   The key of the database which should get deleted
      */
     void deleteFromTable(@NotNull String table, @NotNull String key);
+
+    /**
+     * Closes the current connection to the database
+     */
+    void close();
 }

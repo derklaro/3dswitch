@@ -49,6 +49,12 @@ public final class Validate {
         }
     }
 
+    public static void assertNull(Object o, @NotNull String message) {
+        if (o != null) {
+            throw new AssertionError(message);
+        }
+    }
+
     public static void assertEquals(long current, long expected) {
         if (current != expected) {
             throw new AssertionError("Expected " + expected + " but received " + current);

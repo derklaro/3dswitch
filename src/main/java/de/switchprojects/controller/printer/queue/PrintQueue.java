@@ -25,7 +25,9 @@ package de.switchprojects.controller.printer.queue;
 
 import de.switchprojects.controller.printer.octoprint.OctoPrintHelper;
 import de.switchprojects.controller.printer.queue.object.PrintableObject;
-import de.switchprojects.controller.printer.util.BaseUtil;
+import de.switchprojects.controller.printer.util.ThreadSupport;
+import de.switchprojects.controller.printer.util.Validate;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -41,15 +43,22 @@ public final class PrintQueue extends Thread {
 
     private static final BlockingDeque<PrintableObject> QUEUE = new LinkedBlockingDeque<>();
 
+    public static void queue(@NotNull PrintableObject object) {
+        Validate.assertNotNull(object, "Cannot print null object");
+        Validate.assertEquals(object.isSliced(), true);
+
+        QUEUE.offerLast(object);
+    }
+
     @Override
     public void run() {
         while (!Thread.interrupted()) {
             try {
-                PrintableObject next = QUEUE.take();
+                PrintableObject next = QUEUE.takeFirst();
 
                 if (OctoPrintHelper.isPrintJobRunning()) {
                     QUEUE.addFirst(next);
-                    BaseUtil.sleep(TimeUnit.SECONDS, 30);
+                    ThreadSupport.sleep(TimeUnit.SECONDS, 30);
                     continue;
                 }
 

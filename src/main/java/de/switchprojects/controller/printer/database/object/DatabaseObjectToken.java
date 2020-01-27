@@ -40,11 +40,12 @@ public abstract class DatabaseObjectToken<T> {
      * Creates a new token to read the an object from the database.
      *
      * @param mapFunction The function which maps the stream to the required object
-     * @param key The key of the database object in the database itself
-     * @param table The table in which the database object is located
-     * @param <T> The type of the object which gets deserialize from the stream
+     * @param key         The key of the database object in the database itself
+     * @param table       The table in which the database object is located
+     * @param <T>         The type of the object which gets deserialize from the stream
      * @return The token to deserialize an object from the database
      */
+    @NotNull
     public static <T> DatabaseObjectToken<T> newToken(@NotNull Function<ObjectInputStream, T> mapFunction,
                                                       @NotNull String key, @NotNull String table) {
         return new DatabaseObjectToken<T>() {

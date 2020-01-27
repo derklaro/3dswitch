@@ -24,8 +24,13 @@
 package de.switchprojects.controller.printer.api;
 
 import de.switchprojects.controller.printer.commands.CommandMap;
+import de.switchprojects.controller.printer.database.DatabaseDriver;
 import de.switchprojects.controller.printer.events.EventManager;
+import de.switchprojects.controller.printer.user.UserManagement;
+import de.switchprojects.controller.printer.user.object.UserType;
+import de.switchprojects.controller.printer.util.Validate;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The global api of the system
@@ -62,5 +67,16 @@ public final class GlobalAPI {
     @NotNull
     public static CommandMap getCommandMap() {
         return executorAPI.getCommandMap();
+    }
+
+    @NotNull
+    public static DatabaseDriver getDatabase() {
+        return executorAPI.getDatabase();
+    }
+
+    @Nullable
+    public static UserManagement getUserManagement(@NotNull UserType userType) {
+        Validate.assertNotNull(userType, "Cannot find null as user type");
+        return executorAPI.getUserManagement(userType);
     }
 }

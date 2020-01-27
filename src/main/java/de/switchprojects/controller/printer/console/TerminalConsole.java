@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jline.reader.LineReader;
 
+import java.io.IOException;
 import java.util.logging.Logger;
 
 /**
@@ -95,4 +96,16 @@ public abstract class TerminalConsole extends Logger {
      * Clears the screen of the current console completely
      */
     public abstract void clearScreen();
+
+    /**
+     * Closes the current terminal
+     */
+    public void close() {
+        try {
+            getLineReader().getTerminal().flush();
+            getLineReader().getTerminal().close();
+        } catch (final IOException ex) {
+            ex.printStackTrace();
+        }
+    }
 }

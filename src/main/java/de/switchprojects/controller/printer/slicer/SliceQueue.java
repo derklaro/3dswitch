@@ -21,32 +21,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.switchprojects.controller.printer.util;
+package de.switchprojects.controller.printer.slicer;
 
+import de.switchprojects.controller.printer.queue.object.PrintableObject;
+import de.switchprojects.controller.printer.util.Validate;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.LinkedBlockingDeque;
 
 /**
- * Some basic util methods to use the system
+ * The queue for objects which are not sliced yet
  *
  * @author Pasqual Koschmieder
  * @since 1.0
  */
-public final class BaseUtil {
+public final class SliceQueue extends Thread {
 
-    private BaseUtil() {
-        throw new UnsupportedOperationException();
+    private static final BlockingDeque<PrintableObject> QUEUE = new LinkedBlockingDeque<>();
+
+    public static void queue(@NotNull PrintableObject object) {
+        Validate.assertNotNull(object, "Cannot slice null object");
+        Validate.assertEquals(object.isSliced(), false);
+
+        QUEUE.offerLast(object);
     }
 
-    public static void sleep(@NotNull TimeUnit timeUnit, long time) {
-        Validate.assertBigger(time, 0);
-        Validate.assertNotNull(timeUnit, "Required time unit which is non-null");
-
-        try {
-            timeUnit.sleep(time);
-        } catch (final InterruptedException ex) {
-            ex.printStackTrace();
+    @Override
+    public void run() {
+        while (!Thread.interrupted()) {
+            try {
+                PrintableObject next = QUEUE.takeFirst();
+                Slice3rSlicer.slice(next);
+            } catch (final InterruptedException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 }
