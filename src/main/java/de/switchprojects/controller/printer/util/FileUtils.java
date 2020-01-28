@@ -28,10 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.*;
 
 /**
  * The basic file utils for the system to run simple file stuff
@@ -57,6 +54,20 @@ public final class FileUtils {
 
         try (InputStream inputStream = Files.newInputStream(from)) {
             copy(inputStream, to);
+        } catch (final IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    /**
+     * Copies the given bytes to a target file
+     *
+     * @param target The target path
+     * @param bytes The byte array which should get copied to the file
+     */
+    public static void copy(@NotNull Path target, @NotNull byte[] bytes) {
+        try {
+            Files.write(target, bytes, StandardOpenOption.CREATE_NEW);
         } catch (final IOException ex) {
             ex.printStackTrace();
         }

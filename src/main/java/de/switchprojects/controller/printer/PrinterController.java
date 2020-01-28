@@ -42,6 +42,7 @@ import de.switchprojects.controller.printer.slicer.SliceQueue;
 import de.switchprojects.controller.printer.ticker.SystemTicker;
 import de.switchprojects.controller.printer.user.UserManagement;
 import de.switchprojects.controller.printer.user.object.UserType;
+import de.switchprojects.controller.printer.web.JavalinWebModule;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -81,6 +82,10 @@ public final class PrinterController implements ExecutorAPI {
         System.out.println("Loading discord module...");
         DiscordModule.init(System.getProperty("module.discord.bot.token"));
         System.out.println("Loaded discord module successfully and established connection to discord");
+
+        System.out.println("Loading web module...");
+        JavalinWebModule.init(System.getProperty("web.token"));
+        System.out.println("Loaded web module and bound web server to port 7000");
 
         System.out.println("Opening connection to octoprint...");
         OctoPrintHelper.connect(
@@ -140,6 +145,7 @@ public final class PrinterController implements ExecutorAPI {
     private void close() {
         this.terminalConsole.close();
         DiscordModule.close();
+        JavalinWebModule.close();
         this.databaseDriver.close();
     }
 }
