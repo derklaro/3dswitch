@@ -24,8 +24,14 @@
 package de.switchprojects.controller.printer.queue.object;
 
 import de.switchprojects.controller.printer.database.object.DatabaseObject;
+import de.switchprojects.controller.printer.queue.basic.BasicPrintableObject;
 import de.switchprojects.controller.printer.user.object.User;
 import org.jetbrains.annotations.NotNull;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.function.Function;
 
 /**
  * Represents an object which can be printed and written into the database
@@ -34,6 +40,23 @@ import org.jetbrains.annotations.NotNull;
  * @since 1.0
  */
 public abstract class PrintableObject implements DatabaseObject {
+
+    public static final Function<byte[], PrintableObject> MAPPER = bytes -> {
+        try (ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
+             ObjectInputStream inputStream = new ObjectInputStream(stream)) {
+            User user = (User) inputStream.readObject();
+            Long userID = inputStream.readLong();
+            Long requestTime = inputStream.readLong();
+            String path = inputStream.readUTF();
+            Boolean sliced = inputStream.readBoolean();
+
+            return new BasicPrintableObject(requestTime, userID, user, sliced, path);
+        } catch (final IOException | ClassNotFoundException ex) {
+            ex.printStackTrace();
+        }
+
+        return null;
+    };
 
     public PrintableObject(Long requestTime) {
         this.requestTime = requestTime;

@@ -40,6 +40,10 @@ public class DiscordUserManagement implements UserManagement {
 
     public static final String TABLE_NAME = "discord_users";
 
+    public DiscordUserManagement() {
+        GlobalAPI.getDatabase().createTable(TABLE_NAME);
+    }
+
     @Override
     public @NotNull User getUserByID(@NotNull Long uniqueID) {
         User user = GlobalAPI.getDatabase().getOrDefault(DatabaseObjectToken.newToken(DiscordUser.MAPPER,

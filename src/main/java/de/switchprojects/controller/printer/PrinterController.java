@@ -38,6 +38,7 @@ import de.switchprojects.controller.printer.events.EventManager;
 import de.switchprojects.controller.printer.events.basic.BasicEventManager;
 import de.switchprojects.controller.printer.octoprint.OctoPrintHelper;
 import de.switchprojects.controller.printer.queue.PrintQueue;
+import de.switchprojects.controller.printer.queue.object.PrintableObject;
 import de.switchprojects.controller.printer.slicer.SliceQueue;
 import de.switchprojects.controller.printer.ticker.SystemTicker;
 import de.switchprojects.controller.printer.user.UserManagement;
@@ -103,6 +104,22 @@ public final class PrinterController implements ExecutorAPI {
         new PrintQueue().start();
         new SliceQueue().start();
         System.out.println("Started up queue threads successfully");
+
+        System.out.println("Loading unfinished jobs from database...");
+        this.databaseDriver.createTable("jobs");
+        this.databaseDriver.forEachInTable("jobs", PrintableObject.MAPPER, next -> {
+            if (next == null) {
+                return;
+            }
+
+            if (next.isSliced()) {
+                PrintQueue.queue(next);
+                return;
+            }
+
+            SliceQueue.queueExisting(next);
+        });
+        System.out.println("Successfully loaded all unfinished jobs from database");
 
         System.out.println("Starting system ticker");
         SystemTicker.start();

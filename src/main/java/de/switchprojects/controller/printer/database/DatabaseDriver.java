@@ -29,7 +29,9 @@ import de.switchprojects.controller.printer.database.object.DatabaseObjectToken;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -106,7 +108,22 @@ public interface DatabaseDriver {
      * @param <T>    The type of the object in the database after the map
      * @return A collection of all objects from a specific table in the database
      */
-    @NotNull <T> Collection<T> getAll(@NotNull String table, @NotNull Function<byte[], T> mapper);
+    @NotNull
+    default <T> Collection<T> getAll(@NotNull String table, @NotNull Function<byte[], T> mapper) {
+        Collection<T> out = new ArrayList<>();
+        this.forEachInTable(table, mapper, out::add);
+        return out;
+    }
+
+    /**
+     * Accepts all values in the database to the consumer
+     *
+     * @param table   The table in which the objects are located
+     * @param mapper  The mapper which creates the objects from the bytes of the database
+     * @param handler Handles all objects which are read out of the database
+     * @param <T>     The type of the object in the database after the map
+     */
+    <T> void forEachInTable(@NotNull String table, @NotNull Function<byte[], T> mapper, @NotNull Consumer<T> handler);
 
     /**
      * Deletes an object from the database

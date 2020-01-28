@@ -74,7 +74,7 @@ public class WebUser implements User {
 
     @Override
     public @NotNull String getTable() {
-        return "web_users";
+        return WebUserManagement.TABLE;
     }
 
     @Override

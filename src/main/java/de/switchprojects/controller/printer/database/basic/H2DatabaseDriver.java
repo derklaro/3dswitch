@@ -35,11 +35,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * A default implementation of a database driver
@@ -134,28 +131,23 @@ public class H2DatabaseDriver implements DatabaseDriver {
     }
 
     @Override
-    public @NotNull <T> Collection<T> getAll(@NotNull String table, @NotNull Function<byte[], T> mapper) {
+    public <T> void forEachInTable(@NotNull String table, @NotNull Function<byte[], T> mapper, @NotNull Consumer<T> handler) {
         try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM ?")) {
             statement.setString(1, table);
             ResultSet resultSet = statement.executeQuery();
             if (!resultSet.next()) {
-                return new ArrayList<>();
+                return;
             }
 
-            Collection<T> out = new ArrayList<>();
             while (resultSet.next()) {
                 byte[] next = resultSet.getBytes("value");
                 if (next != null) {
-                    out.add(mapper.apply(next));
+                    handler.accept(mapper.apply(next));
                 }
             }
-
-            return out.stream().filter(Objects::nonNull).collect(Collectors.toList());
         } catch (final SQLException ex) {
             ex.printStackTrace();
         }
-
-        return new ArrayList<>();
     }
 
     @Override

@@ -40,6 +40,10 @@ public class WebUserManagement implements UserManagement {
 
     public static final String TABLE = "web_users";
 
+    public WebUserManagement() {
+        GlobalAPI.getDatabase().createTable(TABLE);
+    }
+
     @Override
     public @NotNull User getUserByID(@NotNull Long uniqueID) {
         User user = GlobalAPI.getDatabase().getOrDefault(DatabaseObjectToken.newToken(WebUser.MAPPER,

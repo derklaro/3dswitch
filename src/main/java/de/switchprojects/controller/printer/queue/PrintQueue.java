@@ -23,6 +23,7 @@
  */
 package de.switchprojects.controller.printer.queue;
 
+import de.switchprojects.controller.printer.api.GlobalAPI;
 import de.switchprojects.controller.printer.octoprint.OctoPrintHelper;
 import de.switchprojects.controller.printer.queue.object.PrintableObject;
 import de.switchprojects.controller.printer.util.ThreadSupport;
@@ -64,6 +65,7 @@ public final class PrintQueue extends Thread {
 
                 System.out.println("Next object polled from queue and ready to print: " + next.getKey());
                 OctoPrintHelper.print(next);
+                GlobalAPI.getDatabase().deleteFromTable(next.getTable(), next.getKey());
                 System.out.println("Started print job successfully");
             } catch (final InterruptedException ex) {
                 ex.printStackTrace();

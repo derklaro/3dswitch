@@ -28,7 +28,9 @@ import de.switchprojects.controller.printer.user.object.User;
 import de.switchprojects.controller.printer.util.Validate;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 
 /**
  * Represents a basic implementation of a print job
@@ -43,6 +45,14 @@ public class BasicPrintableObject extends PrintableObject {
         this.userID = userID;
         this.user = user;
         this.sliced = false;
+        this.path = path;
+    }
+
+    public BasicPrintableObject(Long requestTime, Long userID, User user, boolean sliced, String path) {
+        super(requestTime);
+        this.userID = userID;
+        this.user = user;
+        this.sliced = sliced;
         this.path = path;
     }
 

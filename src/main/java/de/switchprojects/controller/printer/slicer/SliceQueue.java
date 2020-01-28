@@ -23,6 +23,7 @@
  */
 package de.switchprojects.controller.printer.slicer;
 
+import de.switchprojects.controller.printer.api.GlobalAPI;
 import de.switchprojects.controller.printer.queue.object.PrintableObject;
 import de.switchprojects.controller.printer.util.Validate;
 import org.jetbrains.annotations.NotNull;
@@ -41,6 +42,14 @@ public final class SliceQueue extends Thread {
     private static final BlockingDeque<PrintableObject> QUEUE = new LinkedBlockingDeque<>();
 
     public static void queue(@NotNull PrintableObject object) {
+        Validate.assertNotNull(object, "Cannot slice null object");
+        Validate.assertEquals(object.isSliced(), false);
+
+        GlobalAPI.getDatabase().insert(object);
+        QUEUE.offerLast(object);
+    }
+
+    public static void queueExisting(@NotNull PrintableObject object) {
         Validate.assertNotNull(object, "Cannot slice null object");
         Validate.assertEquals(object.isSliced(), false);
 
