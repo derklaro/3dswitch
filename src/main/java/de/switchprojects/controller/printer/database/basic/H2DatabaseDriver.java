@@ -83,10 +83,9 @@ public class H2DatabaseDriver implements DatabaseDriver {
 
     @Override
     public void insert(@NotNull DatabaseObject object) {
-        try (PreparedStatement statement = connection.prepareStatement("INSERT INTO ? (`key`, `value`) VALUES (?, ?)")) {
-            statement.setString(1, object.getTable());
-            statement.setString(2, object.getKey());
-            statement.setBytes(3, object.serialize());
+        try (PreparedStatement statement = connection.prepareStatement("INSERT INTO " + object.getTable() + " (`key`, `value`) VALUES (?, ?)")) {
+            statement.setString(1, object.getKey());
+            statement.setBytes(2, object.serialize());
 
             statement.executeUpdate();
         } catch (final SQLException ex) {
@@ -96,10 +95,9 @@ public class H2DatabaseDriver implements DatabaseDriver {
 
     @Override
     public void update(@NotNull DatabaseObject object) {
-        try (PreparedStatement statement = connection.prepareStatement("UPDATE ? SET `value` = ? WHERE `key` = ?")) {
-            statement.setString(1, object.getTable());
-            statement.setBytes(2, object.serialize());
-            statement.setString(3, object.getKey());
+        try (PreparedStatement statement = connection.prepareStatement("UPDATE " + object.getTable() + " SET `value` = ? WHERE `key` = ?")) {
+            statement.setBytes(1, object.serialize());
+            statement.setString(2, object.getKey());
 
             statement.executeUpdate();
         } catch (final SQLException ex) {
@@ -109,9 +107,8 @@ public class H2DatabaseDriver implements DatabaseDriver {
 
     @Override
     public <T> @Nullable T getOrDefault(@NotNull DatabaseObjectToken<T> databaseObjectToken, @Nullable T def) {
-        try (PreparedStatement statement = connection.prepareStatement("SELECT `value` FROM ? WHERE `key` = ?")) {
-            statement.setString(1, databaseObjectToken.getTable());
-            statement.setString(2, databaseObjectToken.getKey());
+        try (PreparedStatement statement = connection.prepareStatement("SELECT `value` FROM " + databaseObjectToken.getTable() + " WHERE `key` = ?")) {
+            statement.setString(1, databaseObjectToken.getKey());
 
             ResultSet resultSet = statement.executeQuery();
             if (!resultSet.next()) {
@@ -132,12 +129,8 @@ public class H2DatabaseDriver implements DatabaseDriver {
 
     @Override
     public <T> void forEachInTable(@NotNull String table, @NotNull Function<byte[], T> mapper, @NotNull Consumer<T> handler) {
-        try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM ?")) {
-            statement.setString(1, table);
+        try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + table)) {
             ResultSet resultSet = statement.executeQuery();
-            if (!resultSet.next()) {
-                return;
-            }
 
             while (resultSet.next()) {
                 byte[] next = resultSet.getBytes("value");
@@ -152,9 +145,8 @@ public class H2DatabaseDriver implements DatabaseDriver {
 
     @Override
     public void deleteFromTable(@NotNull String table, @NotNull String key) {
-        try (PreparedStatement statement = connection.prepareStatement("DELETE FROM ? WHERE `key` = ?")) {
-            statement.setString(1, table);
-            statement.setString(2, key);
+        try (PreparedStatement statement = connection.prepareStatement("DELETE FROM " + table + " WHERE `key` = ?")) {
+            statement.setString(1, key);
 
             statement.executeUpdate();
         } catch (final SQLException ex) {

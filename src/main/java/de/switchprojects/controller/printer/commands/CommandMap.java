@@ -26,6 +26,8 @@ package de.switchprojects.controller.printer.commands;
 import de.switchprojects.controller.printer.commands.source.CommandSource;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
+
 /**
  * Represents a command map which holds all commands and dispatches them when a user typed a command
  * into the console.
@@ -67,4 +69,11 @@ public interface CommandMap {
      * @return If the map contained any command which matches to the command line
      */
     boolean dispatchCommand(@NotNull CommandSource source, @NotNull String commandLine);
+
+    /**
+     * Get all currently registered commands
+     *
+     * @return All registered commands
+     */
+    @NotNull Collection<Command> getRegisteredCommands();
 }

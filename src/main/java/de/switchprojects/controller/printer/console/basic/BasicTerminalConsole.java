@@ -31,6 +31,7 @@ import de.switchprojects.controller.printer.console.handler.AbstractHandler;
 import de.switchprojects.controller.printer.console.handler.basic.BasicHandler;
 import de.switchprojects.controller.printer.console.stream.BasicLoggingOutputStream;
 import de.switchprojects.controller.printer.console.util.TerminalUtil;
+import de.switchprojects.controller.printer.util.FileUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jline.reader.LineReader;
@@ -39,6 +40,7 @@ import org.jline.utils.InfoCmp;
 
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.file.Paths;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 
@@ -53,6 +55,8 @@ public class BasicTerminalConsole extends TerminalConsole {
     public BasicTerminalConsole() throws IOException {
         Terminal terminal = TerminalUtil.createNewTerminal();
         this.lineReader = TerminalUtil.newLineReader(terminal);
+
+        FileUtils.createDirectories(Paths.get("logs"));
 
         FileHandler fileHandler = new FileHandler("logs/cloud.log", 70000000, 8, true);
         fileHandler.setLevel(Level.ALL);

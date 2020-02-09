@@ -104,11 +104,12 @@ public class BasicPrintableObject extends PrintableObject {
     public @NotNull byte[] serialize() {
         try (ByteArrayOutputStream stream = new ByteArrayOutputStream();
              ObjectOutputStream objectOutputStream = new ObjectOutputStream(stream)) {
-            objectOutputStream.writeObject(this.user);
             objectOutputStream.writeLong(this.userID);
             objectOutputStream.writeLong(getRequestTime());
             objectOutputStream.writeUTF(this.path);
             objectOutputStream.writeBoolean(this.sliced);
+
+            objectOutputStream.writeObject(this.user);
 
             return stream.toByteArray();
         } catch (final IOException ex) {

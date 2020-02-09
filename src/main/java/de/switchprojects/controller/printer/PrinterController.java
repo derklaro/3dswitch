@@ -27,6 +27,10 @@ import de.switchprojects.controller.printer.api.ExecutorAPI;
 import de.switchprojects.controller.printer.api.GlobalAPI;
 import de.switchprojects.controller.printer.commands.CommandMap;
 import de.switchprojects.controller.printer.commands.basic.BasicCommandMap;
+import de.switchprojects.controller.printer.commands.basic.commands.CleanedCommand;
+import de.switchprojects.controller.printer.commands.basic.commands.HelpCommand;
+import de.switchprojects.controller.printer.commands.basic.commands.QueueCommand;
+import de.switchprojects.controller.printer.commands.basic.commands.StopCommand;
 import de.switchprojects.controller.printer.console.TerminalConsole;
 import de.switchprojects.controller.printer.console.basic.BasicTerminalConsole;
 import de.switchprojects.controller.printer.console.reader.TerminalReaderThread;
@@ -94,6 +98,7 @@ public final class PrinterController implements ExecutorAPI {
                 Integer.parseInt(System.getProperty("printer.port")),
                 System.getProperty("printer.api.key")
         );
+        this.jobRunning = OctoPrintHelper.isPrintJobRunning();
         System.out.println("Opened connection to octoprint successfully");
 
         System.out.println("Starting terminal console");
@@ -121,6 +126,13 @@ public final class PrinterController implements ExecutorAPI {
         });
         System.out.println("Successfully loaded all unfinished jobs from database");
 
+        System.out.println("Registering all default commands...");
+        this.commandMap.registerCommand(new StopCommand());
+        this.commandMap.registerCommand(new HelpCommand());
+        this.commandMap.registerCommand(new CleanedCommand());
+        this.commandMap.registerCommand(new QueueCommand());
+        System.out.println("Registered " + GlobalAPI.getCommandMap().getRegisteredCommands().size() + " commands");
+
         System.out.println("Starting system ticker");
         SystemTicker.start();
     }
@@ -134,6 +146,8 @@ public final class PrinterController implements ExecutorAPI {
     private final Collection<UserManagement> userManagements = new CopyOnWriteArrayList<>();
 
     private final TerminalConsole terminalConsole;
+
+    private boolean jobRunning;
 
     @Override
     public @NotNull EventManager getEventManager() {
@@ -153,6 +167,16 @@ public final class PrinterController implements ExecutorAPI {
     @Override
     public @Nullable UserManagement getUserManagement(@NotNull UserType userType) {
         return this.userManagements.stream().filter(e -> e.getHandlingType().equals(userType)).findFirst().orElse(null);
+    }
+
+    @Override
+    public boolean isReadyForNext() {
+        return !this.jobRunning;
+    }
+
+    @Override
+    public void setIsReadyForNext(boolean ready) {
+        this.jobRunning = !ready;
     }
 
     public Collection<UserManagement> getUserManagements() {

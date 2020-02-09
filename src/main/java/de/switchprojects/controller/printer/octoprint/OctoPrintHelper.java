@@ -23,15 +23,13 @@
  */
 package de.switchprojects.controller.printer.octoprint;
 
+import de.switchprojects.controller.printer.octoprint.delete.FileDeleteCommand;
 import de.switchprojects.controller.printer.octoprint.upload.FileUploadCommand;
 import de.switchprojects.controller.printer.queue.object.PrintableObject;
 import de.switchprojects.controller.printer.util.Validate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.octoprint.api.FileCommand;
-import org.octoprint.api.JobCommand;
-import org.octoprint.api.OctoPrintInstance;
-import org.octoprint.api.PrinterCommand;
+import org.octoprint.api.*;
 import org.octoprint.api.model.OctoPrintJob;
 import org.octoprint.api.model.PrinterState;
 
@@ -62,11 +60,23 @@ public final class OctoPrintHelper {
         } catch (final MalformedURLException ex) {
             throw new RuntimeException(ex);
         }
+
+        ConnectionCommand connectionCommand = new ConnectionCommand(octoPrintInstance);
+        if (connectionCommand.getCurrentState() != null && connectionCommand.getCurrentState().isConnected()) {
+            return;
+        }
+
+        connectionCommand.connect();
     }
 
     public static void print(@NotNull PrintableObject object) {
         Validate.assertNotNull(object, "Cannot print null-object");
         Validate.assertNotNull(octoPrintInstance, "Not connected to printer!");
+
+        ConnectionCommand connectionCommand = new ConnectionCommand(octoPrintInstance);
+        if (connectionCommand.getCurrentState() != null && !connectionCommand.getCurrentState().isConnected()) {
+            connectionCommand.connect();
+        }
 
         File file = new File(object.getPath());
         Validate.assertEquals(file.exists(), true);
@@ -76,7 +86,14 @@ public final class OctoPrintHelper {
         fileUploadCommand.uploadFile(file);
 
         FileCommand fileCommand = new FileCommand(octoPrintInstance);
+        fileCommand.printFile(file.getName());
         Validate.assertEquals(fileCommand.printFile(file.getName()), true);
+    }
+
+    public static void deleteFile(@NotNull String name) {
+        Validate.assertNotNull(name, "Invalid file name provided");
+
+        new FileDeleteCommand(octoPrintInstance).deleteFile(name);
     }
 
     @Nullable

@@ -72,5 +72,8 @@ dependencies {
     compile 'io.javalin:javalin:3.7.0'
     compile 'org.jetbrains:annotations:16.0.2'
     compile 'net.dv8tion:JDA:4.1.1_101'
+    compile 'org.slf4j:slf4j-simple:1.7.28'
+    compile 'org.slf4j:slf4j-api:1.8.0-beta4'
+    compile 'org.slf4j:slf4j-simple:1.8.0-beta4'
     compile 'org.octoprint.api:octoprint-java-lib:0.0.10' // using java 8 build of Pasqual instead of outdated Java 7 version
 }

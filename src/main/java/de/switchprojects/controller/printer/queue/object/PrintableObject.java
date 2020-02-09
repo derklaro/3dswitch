@@ -44,11 +44,12 @@ public abstract class PrintableObject implements DatabaseObject {
     public static final Function<byte[], PrintableObject> MAPPER = bytes -> {
         try (ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
              ObjectInputStream inputStream = new ObjectInputStream(stream)) {
-            User user = (User) inputStream.readObject();
             Long userID = inputStream.readLong();
             Long requestTime = inputStream.readLong();
             String path = inputStream.readUTF();
             Boolean sliced = inputStream.readBoolean();
+
+            User user = (User) inputStream.readObject();
 
             return new BasicPrintableObject(requestTime, userID, user, sliced, path);
         } catch (final IOException | ClassNotFoundException ex) {

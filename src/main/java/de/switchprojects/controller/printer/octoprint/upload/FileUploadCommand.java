@@ -55,6 +55,7 @@ public class FileUploadCommand extends OctoPrintCommand {
                     "User-Agent",
                     "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11"
             );
+            connection.setRequestProperty("X-Api-Key", this.g_comm.getM_key());
             connection.setRequestMethod("POST");
             connection.setUseCaches(false);
             connection.setDoOutput(true);
@@ -64,8 +65,8 @@ public class FileUploadCommand extends OctoPrintCommand {
 
             try (PrintWriter writer = new PrintWriter(new OutputStreamWriter(connection.getOutputStream(), StandardCharsets.UTF_8))) {
                 writer.println("--" + boundary);
-                writer.println("Content-Disposition: form-data; name=\"" + file.getName() + "\"; filename=\"" + file.getName() + "\"");
-                writer.println("Content-Type: text/plain; charset=UTF-8");
+                writer.println("Content-Disposition: form-data; name=\"file\"; filename=\"" + file.getName() + "\"");
+                writer.println("Content-Type: text/plain");
                 writer.println();
 
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
@@ -77,7 +78,7 @@ public class FileUploadCommand extends OctoPrintCommand {
                 writer.println("--" + boundary + "--");
             }
 
-            Validate.assertEquals(connection.getResponseCode(), 200);
+            Validate.assertEquals(connection.getResponseCode(), 201);
         } catch (final IOException ex) {
             ex.printStackTrace();
         }

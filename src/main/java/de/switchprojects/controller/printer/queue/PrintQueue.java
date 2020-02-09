@@ -26,6 +26,7 @@ package de.switchprojects.controller.printer.queue;
 import de.switchprojects.controller.printer.api.GlobalAPI;
 import de.switchprojects.controller.printer.octoprint.OctoPrintHelper;
 import de.switchprojects.controller.printer.queue.object.PrintableObject;
+import de.switchprojects.controller.printer.ticker.SystemTicker;
 import de.switchprojects.controller.printer.util.ThreadSupport;
 import de.switchprojects.controller.printer.util.Validate;
 import org.jetbrains.annotations.NotNull;
@@ -42,7 +43,7 @@ import java.util.concurrent.TimeUnit;
  */
 public final class PrintQueue extends Thread {
 
-    private static final BlockingDeque<PrintableObject> QUEUE = new LinkedBlockingDeque<>();
+    public static final BlockingDeque<PrintableObject> QUEUE = new LinkedBlockingDeque<>();
 
     public static void queue(@NotNull PrintableObject object) {
         Validate.assertNotNull(object, "Cannot print null object");
@@ -63,8 +64,20 @@ public final class PrintQueue extends Thread {
                     continue;
                 }
 
+                if (!GlobalAPI.isReadyForNext()) {
+                    QUEUE.addFirst(next);
+                    ThreadSupport.sleep(TimeUnit.SECONDS, 10);
+                    continue;
+                }
+
+                if (SystemTicker.runningJob != null) {
+                    OctoPrintHelper.deleteFile(SystemTicker.runningJob.getName());
+                    SystemTicker.runningJob = null;
+                }
+
                 System.out.println("Next object polled from queue and ready to print: " + next.getKey());
                 OctoPrintHelper.print(next);
+                GlobalAPI.setIsReadyForNext(false);
                 GlobalAPI.getDatabase().deleteFromTable(next.getTable(), next.getKey());
                 System.out.println("Started print job successfully");
             } catch (final InterruptedException ex) {

@@ -74,6 +74,11 @@ public class BasicCommandMap implements CommandMap {
         return true;
     }
 
+    @Override
+    public @NotNull Collection<Command> getRegisteredCommands() {
+        return this.commands;
+    }
+
     private Optional<Command> findMatching(String commandLabel) {
         return this.commands.stream()
                 .filter(e -> e.getCommandName().equalsIgnoreCase(commandLabel)

@@ -79,4 +79,12 @@ public final class GlobalAPI {
         Validate.assertNotNull(userType, "Cannot find null as user type");
         return executorAPI.getUserManagement(userType);
     }
+
+    public static boolean isReadyForNext() {
+        return executorAPI.isReadyForNext();
+    }
+
+    public static void setIsReadyForNext(boolean ready) {
+        executorAPI.setIsReadyForNext(ready);
+    }
 }

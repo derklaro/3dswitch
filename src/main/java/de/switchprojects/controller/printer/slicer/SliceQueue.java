@@ -25,9 +25,13 @@ package de.switchprojects.controller.printer.slicer;
 
 import de.switchprojects.controller.printer.api.GlobalAPI;
 import de.switchprojects.controller.printer.queue.object.PrintableObject;
+import de.switchprojects.controller.printer.util.FileUtils;
 import de.switchprojects.controller.printer.util.Validate;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 
@@ -39,7 +43,7 @@ import java.util.concurrent.LinkedBlockingDeque;
  */
 public final class SliceQueue extends Thread {
 
-    private static final BlockingDeque<PrintableObject> QUEUE = new LinkedBlockingDeque<>();
+    public static final BlockingDeque<PrintableObject> QUEUE = new LinkedBlockingDeque<>();
 
     public static void queue(@NotNull PrintableObject object) {
         Validate.assertNotNull(object, "Cannot slice null object");
@@ -61,10 +65,30 @@ public final class SliceQueue extends Thread {
         while (!Thread.interrupted()) {
             try {
                 PrintableObject next = QUEUE.takeFirst();
+                ensureSlicerExists();
                 Slice3rSlicer.slice(next);
             } catch (final InterruptedException ex) {
                 ex.printStackTrace();
             }
         }
+    }
+
+    private static void ensureSlicerExists() {
+        File file = new File("slicer");
+        if (file.exists()) {
+            return;
+        }
+
+        System.out.println("Creating non-existing slicer...");
+        FileUtils.createDirectories(file.toPath());
+
+        try (InputStream stream = SliceQueue.class.getClassLoader().getResourceAsStream("internal-slicer.zip")) {
+            Validate.assertNotNull(stream, "The internal-slicer.zip is not build in. Custom build?");
+            FileUtils.unzip(stream, "slicer");
+        } catch (final IOException ex) {
+            ex.printStackTrace();
+        }
+
+        System.out.println("Unzipped slicer completely");
     }
 }

@@ -52,21 +52,22 @@ public final class Slice3rSlicer {
         Validate.assertEquals(object.isSliced(), false);
 
         String objectPath = Paths.get(object.getPath()).toFile().getAbsolutePath();
+        File file = new File("slicer/prusa-slicer-console.exe").getAbsoluteFile();
 
         String[] command = new String[]{
-                "sh",
-                new File("Slic3r").getAbsolutePath(),
-                objectPath,
+                file.getAbsolutePath(),
+                "-g",
                 "--load",
-                "config.ini",
+                "switch.ini",
                 "-o",
-                objectPath + ".gcode"
+                objectPath + ".gcode",
+                objectPath
         };
 
         try {
             Process process = new ProcessBuilder()
                     .inheritIO()
-                    .directory(new File("slicer"))
+                    .directory(new File("slicer").getAbsoluteFile())
                     .command(command)
                     .start();
             process.waitFor();

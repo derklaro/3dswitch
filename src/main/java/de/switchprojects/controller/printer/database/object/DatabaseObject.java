@@ -25,13 +25,15 @@ package de.switchprojects.controller.printer.database.object;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
+
 /**
  * Represents a database object which can get inserted into the database.
  *
  * @author Pasqual Koschmieder
  * @since 1.0
  */
-public interface DatabaseObject {
+public interface DatabaseObject extends Serializable {
 
     /**
      * @return The key of the database object

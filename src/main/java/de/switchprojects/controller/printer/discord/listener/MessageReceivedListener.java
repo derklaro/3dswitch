@@ -75,7 +75,7 @@ public final class MessageReceivedListener extends ListenerAdapter {
 
         User user = getDiscordUserManagementOrFail().getUserByID(event.getAuthor().getIdLong());
         attachment.retrieveInputStream().thenAccept(stream -> {
-            String path = "files/unsliced/" + System.currentTimeMillis() + attachment.getFileName().replace(attachmentExtension, "");
+            String path = "files/unsliced/" + System.currentTimeMillis() + "-" + attachment.getFileName();
 
             FileUtils.copy(stream, Paths.get(path));
             PrintableObject object = new BasicPrintableObject(user.getUniqueID(), null, user, path);

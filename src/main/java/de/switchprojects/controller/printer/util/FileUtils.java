@@ -25,10 +25,14 @@ package de.switchprojects.controller.printer.util;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * The basic file utils for the system to run simple file stuff
@@ -123,6 +127,46 @@ public final class FileUtils {
     }
 
     /**
+     * Unzips a specified folder
+     *
+     * @param source The source stream of the zip file
+     * @param target The target folder to which the files should gets unzipped
+     */
+    public static void unzip(@NotNull InputStream source, @NotNull String target) {
+        Validate.assertNotNull(source, "Cannot read from null stream");
+        Validate.assertNotNull(target, "Cannot unzip file to null target folder");
+
+        byte[] buffer = new byte[0x1FFF];
+        File destDir = new File(target);
+        if (!destDir.exists()) {
+            createDirectories(destDir.toPath());
+        }
+
+        try (ZipInputStream zipInputStream = new ZipInputStream(source, StandardCharsets.UTF_8)) {
+            ZipEntry zipEntry;
+            while ((zipEntry = zipInputStream.getNextEntry()) != null) {
+                File newFile = new File(target + "/" + zipEntry.getName());
+                if (zipEntry.isDirectory()) {
+                    createDirectories(newFile.toPath());
+                } else {
+                    createFile(newFile.toPath());
+
+                    try (OutputStream outputStream = Files.newOutputStream(newFile.toPath())) {
+                        int length;
+                        while ((length = zipInputStream.read(buffer)) != -1) {
+                            outputStream.write(buffer, 0, length);
+                        }
+                    }
+                }
+
+                zipInputStream.closeEntry();
+            }
+        } catch (final IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    /**
      * Writes all bytes from inputStream to outputStream
      *
      * @param source      The source file stream from which the file is read
@@ -135,6 +179,27 @@ public final class FileUtils {
         while ((read = source.read(buffer)) != -1) {
             destination.write(buffer, 0, read);
             destination.flush();
+        }
+    }
+
+    /**
+     * Creates a new file on the specified path, including all parent directories
+     *
+     * @param path The path of the new file
+     */
+    private static void createFile(@NotNull Path path) {
+        Validate.assertNotNull(path, "Cannot create file on null path");
+
+        if (!Files.exists(path)) {
+            Path parent = path.getParent();
+            if (parent != null && !Files.exists(parent)) {
+                try {
+                    Files.createDirectories(parent);
+                    Files.createFile(path);
+                } catch (final IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
         }
     }
 }

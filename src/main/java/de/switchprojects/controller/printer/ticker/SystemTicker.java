@@ -27,7 +27,9 @@ import de.switchprojects.controller.printer.octoprint.OctoPrintHelper;
 import de.switchprojects.controller.printer.util.ThreadSupport;
 import org.octoprint.api.model.OctoPrintJob;
 
-import java.time.Duration;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -39,9 +41,15 @@ import java.util.concurrent.TimeUnit;
  */
 public final class SystemTicker {
 
+    public static OctoPrintJob runningJob;
+
+    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("###.##");
+
+    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("mm:ss");
+
     public static void start() {
         while (!Thread.interrupted()) {
-            ThreadSupport.sleep(TimeUnit.MINUTES, 1);
+            ThreadSupport.sleep(TimeUnit.SECONDS, 30);
 
             OctoPrintJob currentJob = OctoPrintHelper.getCurrentPrintJob();
             if (currentJob == null) {
@@ -49,17 +57,23 @@ public final class SystemTicker {
                 continue;
             }
 
+            if (runningJob == null) {
+                runningJob = currentJob;
+            }
+
             OctoPrintJob.JobProgress progress = currentJob.getJobProgress();
+            if (progress == null) {
+                System.out.println("No job is currently running");
+                continue;
+            }
 
             System.out.println("The print job " + currentJob.getName() + " is running!");
-            System.out.println("Progress: " + progress.percentComplete() + format(progress));
+            System.out.println("Progress: " + DECIMAL_FORMAT.format(currentJob.getJobProgress().percentComplete()) + "%; " + format(progress));
         }
     }
 
     private static String format(OctoPrintJob.JobProgress progress) {
-        long progressed = Duration.ofMillis(progress.elapsedTime()).toMinutes();
-        long remaining = Duration.ofMillis(progress.timeRemaining()).toMinutes();
-
-        return String.format(" Time: %d, Remaining: %d", progressed, remaining);
+        return String.format("Time progressed: %s, Time remaining: %s", DATE_FORMAT.format(TimeUnit.SECONDS.toMillis(progress.elapsedTime())),
+                progress.timeRemaining() != null ? DATE_FORMAT.format(TimeUnit.SECONDS.toMillis(progress.timeRemaining())) : "unbekannt");
     }
 }

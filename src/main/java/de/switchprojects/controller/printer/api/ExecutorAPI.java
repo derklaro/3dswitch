@@ -61,4 +61,16 @@ public interface ExecutorAPI {
      * @return The user management which handles the specified type or {@code null} if the type is not handled
      */
     @Nullable UserManagement getUserManagement(@NotNull UserType userType);
+
+    /**
+     * @return If the printer is ready and cleaned up to print the next object
+     */
+    boolean isReadyForNext();
+
+    /**
+     * Sets the status if the printer is cleaned up and ready for the next job
+     *
+     * @param ready If the printer is ready
+     */
+    void setIsReadyForNext(boolean ready);
 }
