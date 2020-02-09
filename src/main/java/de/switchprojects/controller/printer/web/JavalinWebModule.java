@@ -61,23 +61,23 @@ public final class JavalinWebModule {
                 throw new BadRequestResponse("File body is not provided");
             }
 
-            String token = ctx.header("token");
+            String token = ctx.header("X-Auth-Token");
             if (token == null || !token.equals(acceptedToken)) {
                 throw new ForbiddenResponse("API token is not provided or invalid");
             }
 
-            Long userID = parseHeader(ctx.header("user"));
+            Long userID = parseHeader(ctx.header("X-User-ID"));
             if (userID == -1L) {
                 throw new BadRequestResponse("UserID missing or not a long");
             }
 
-            String fileName = ctx.header("name");
+            String fileName = ctx.header("X-File-Name");
             if (fileName == null) {
                 throw new BadRequestResponse("The file name is not given in the headers");
             }
 
             User user = getWebUserManagementOrFail().getUserByID(userID);
-            String path = "files/unsliced/" + System.currentTimeMillis() + fileName;
+            String path = "files/unsliced/" + System.currentTimeMillis() + "-" + fileName;
 
             FileUtils.copy(Paths.get(path), body);
             PrintableObject object = new BasicPrintableObject(user.getUniqueID(), null, user, path);
