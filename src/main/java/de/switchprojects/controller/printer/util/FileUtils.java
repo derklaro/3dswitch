@@ -70,6 +70,10 @@ public final class FileUtils {
      * @param bytes The byte array which should get copied to the file
      */
     public static void copy(@NotNull Path target, @NotNull byte[] bytes) {
+        Validate.assertNotNull(target, "Cannot copy to null path");
+        Validate.assertNotNull(bytes, "Cannot write null bytes");
+        Validate.assertBigger(bytes.length, 0);
+
         try {
             Files.write(target, bytes, StandardOpenOption.CREATE_NEW);
         } catch (final IOException ex) {
