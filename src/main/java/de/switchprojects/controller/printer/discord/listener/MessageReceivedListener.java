@@ -56,22 +56,29 @@ public final class MessageReceivedListener extends ListenerAdapter {
     @Override
     public void onPrivateMessageReceived(@Nonnull PrivateMessageReceivedEvent event) {
         if (event.getMessage().getAttachments().size() != 1) {
+            event.getChannel().sendMessage("Please add one attachment which is an unsliced 3D-File (allowed: \"*.stl\" or \"*.obj\"").queue();
             return;
         }
 
         Message.Attachment attachment = event.getMessage().getAttachments().get(0);
         String attachmentExtension = attachment.getFileExtension();
         if (attachmentExtension == null) {
+            event.getChannel().sendMessage("Please add one attachment which is an unsliced 3D-File (allowed: \"*.stl\" or \"*.obj\"").queue();
             return;
         }
 
         if (ALLOWED_EXTENSIONS.stream().noneMatch(attachmentExtension::equals)) {
+            event.getChannel().sendMessage("Please add one attachment which is an unsliced 3D-File (allowed: \"*.stl\" or \"*.obj\"").queue();
             return;
         }
 
         if (!DiscordModule.hasAccess(event.getAuthor())) {
+            event.getChannel().sendMessage("I'm sorry but you do not have permission to upload a file. " +
+                    "Please contact an administrator if you believe this is an error").queue();
             return;
         }
+
+        event.getChannel().sendMessage("Uploading file, please wait...").queue();
 
         User user = getDiscordUserManagementOrFail().getUserByID(event.getAuthor().getIdLong());
         attachment.retrieveInputStream().thenAccept(stream -> {
@@ -81,6 +88,8 @@ public final class MessageReceivedListener extends ListenerAdapter {
             PrintableObject object = new BasicPrintableObject(user.getUniqueID(), null, user, path);
 
             SliceQueue.queue(object);
+
+            event.getChannel().sendMessage("Received file successfully and added it to slice queue").queue();
         });
     }
 
