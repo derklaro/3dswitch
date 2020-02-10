@@ -25,7 +25,6 @@ package de.switchprojects.controller.printer.discord.listener;
 
 import de.switchprojects.controller.printer.discord.DiscordModule;
 import de.switchprojects.controller.printer.events.annotations.Subscribe;
-import de.switchprojects.controller.printer.ticker.SystemTicker;
 import de.switchprojects.controller.printer.ticker.event.SystemTickEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
@@ -43,6 +42,31 @@ import static de.switchprojects.controller.printer.ticker.SystemTicker.DECIMAL_F
  * @since 1.0
  */
 public final class SystemTickerListener {
+
+    public SystemTickerListener() {
+        Objects.requireNonNull(DiscordModule.getGuild().getTextChannelById("676329808535355392"), "The status channel can't get located")
+                .retrievePinnedMessages()
+                .queue(e -> {
+                    e.stream()
+                            .filter(message -> !message.getAuthor().getId().equals(DiscordModule.getJda().getSelfUser().getId()))
+                            .forEach(message -> message.delete().queue());
+
+                    if (e.isEmpty()) {
+                        return;
+                    }
+
+                    if (e.size() == 1) {
+                        lastMessage = e.get(0);
+                        return;
+                    }
+
+                    for (int i = 1; i < e.size(); i++) {
+                        e.get(i).delete().queue();
+                    }
+
+                    lastMessage = e.get(0);
+                });
+    }
 
     private Message lastMessage;
 
@@ -64,6 +88,9 @@ public final class SystemTickerListener {
 
         Objects.requireNonNull(DiscordModule.getGuild().getTextChannelById("676329808535355392"), "The status channel can't get located")
                 .sendMessage(embed)
-                .queue(e -> lastMessage = e);
+                .queue(e -> {
+                    lastMessage = e;
+                    lastMessage.pin().queue();
+                });
     }
 }

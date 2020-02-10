@@ -98,4 +98,8 @@ public final class DiscordModule {
     public static Guild getGuild() {
         return guild;
     }
+
+    public static JDA getJda() {
+        return jda;
+    }
 }
