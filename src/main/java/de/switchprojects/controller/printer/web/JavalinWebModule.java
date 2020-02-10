@@ -25,22 +25,15 @@ package de.switchprojects.controller.printer.web;
 
 import de.switchprojects.controller.printer.PrinterController;
 import de.switchprojects.controller.printer.api.GlobalAPI;
-import de.switchprojects.controller.printer.queue.basic.BasicPrintableObject;
-import de.switchprojects.controller.printer.queue.object.PrintableObject;
-import de.switchprojects.controller.printer.slicer.SliceQueue;
 import de.switchprojects.controller.printer.user.UserManagement;
-import de.switchprojects.controller.printer.user.object.User;
 import de.switchprojects.controller.printer.user.object.UserType;
-import de.switchprojects.controller.printer.util.FileUtils;
 import de.switchprojects.controller.printer.util.Validate;
+import de.switchprojects.controller.printer.web.handlers.FileHandler;
+import de.switchprojects.controller.printer.web.handlers.UserHandler;
 import de.switchprojects.controller.printer.web.user.WebUserManagement;
 import io.javalin.Javalin;
-import io.javalin.http.BadRequestResponse;
-import io.javalin.http.ForbiddenResponse;
 import io.javalin.http.HandlerType;
 import org.jetbrains.annotations.NotNull;
-
-import java.nio.file.Paths;
 
 /**
  * @author Pasqual Koschmieder
@@ -55,35 +48,11 @@ public final class JavalinWebModule {
     private static Javalin javalin;
 
     public static void init(@NotNull String acceptedToken) {
-        javalin = Javalin.create(e -> e.showJavalinBanner = false).addHandler(HandlerType.POST, "/api/files", ctx -> {
-            byte[] body = ctx.bodyAsBytes();
-            if (body.length == 0) {
-                throw new BadRequestResponse("File body is not provided");
-            }
-
-            String token = ctx.header("X-Auth-Token");
-            if (token == null || !token.equals(acceptedToken)) {
-                throw new ForbiddenResponse("API token is not provided or invalid");
-            }
-
-            Long userID = parseHeader(ctx.header("X-User-ID"));
-            if (userID == -1L) {
-                throw new BadRequestResponse("UserID missing or not a long");
-            }
-
-            String fileName = ctx.header("X-File-Name");
-            if (fileName == null) {
-                throw new BadRequestResponse("The file name is not given in the headers");
-            }
-
-            User user = getWebUserManagementOrFail().getUserByID(userID);
-            String path = "files/unsliced/" + System.currentTimeMillis() + "-" + fileName;
-
-            FileUtils.copy(Paths.get(path), body);
-            PrintableObject object = new BasicPrintableObject(user.getUniqueID(), null, user, path);
-
-            SliceQueue.queue(object);
-        }).start(7000);
+        javalin = Javalin
+                .create(e -> e.showJavalinBanner = false)
+                .addHandler(HandlerType.POST, "/api/files", new FileHandler(acceptedToken))
+                .addHandler(HandlerType.POST, "/api/user", new UserHandler(acceptedToken))
+                .start(7000);
 
         PrinterController.getInstance().getUserManagements().add(new WebUserManagement());
     }
@@ -95,7 +64,7 @@ public final class JavalinWebModule {
         }
     }
 
-    private static Long parseHeader(String header) {
+    public static Long parseHeader(String header) {
         if (header == null) {
             return -1L;
         }
@@ -108,7 +77,7 @@ public final class JavalinWebModule {
     }
 
     @NotNull
-    private static UserManagement getWebUserManagementOrFail() {
+    public static UserManagement getWebUserManagementOrFail() {
         UserManagement userManagement = GlobalAPI.getUserManagement(UserType.WEB);
         Validate.assertNotNull(userManagement, "Web user management is not registered");
         return userManagement;
