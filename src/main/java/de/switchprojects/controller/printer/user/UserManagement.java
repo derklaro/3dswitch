@@ -25,6 +25,7 @@ package de.switchprojects.controller.printer.user;
 
 import de.switchprojects.controller.printer.user.object.User;
 import de.switchprojects.controller.printer.user.object.UserType;
+import de.switchprojects.controller.printer.user.util.NotifyType;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -61,10 +62,11 @@ public interface UserManagement {
     /**
      * Notifies the user that the current print job is done
      *
-     * @param fileName The name of the printed file
-     * @param userID   The id of the user which gave the task
+     * @param notifyType The type of the current notify message which should get sent to the user
+     * @param fileName   The name of the printed file
+     * @param userID     The id of the user which gave the task
      */
-    void notifyPrintFinished(@NotNull String fileName, long userID);
+    void notify(@NotNull NotifyType notifyType, @NotNull String fileName, long userID);
 
     /**
      * @return The type of user which this manager is handling

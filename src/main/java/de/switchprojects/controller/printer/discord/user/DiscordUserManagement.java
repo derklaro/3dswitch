@@ -29,7 +29,10 @@ import de.switchprojects.controller.printer.discord.DiscordModule;
 import de.switchprojects.controller.printer.user.UserManagement;
 import de.switchprojects.controller.printer.user.object.User;
 import de.switchprojects.controller.printer.user.object.UserType;
+import de.switchprojects.controller.printer.user.util.NotifyType;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Manges the user which are connected via discord
@@ -63,9 +66,32 @@ public class DiscordUserManagement implements UserManagement {
     }
 
     @Override
-    public void notifyPrintFinished(@NotNull String fileName, long userID) {
+    public void notify(@NotNull NotifyType notifyType, @NotNull String fileName, long userID) {
+        AtomicReference<String> message = new AtomicReference<>("<notify-type=" + notifyType.name() + " is unknown. Contact an administrator>");
+        switch (notifyType) {
+            case SLICE_STARTED: {
+                message.set("The slice process for object " + fileName + " has just started.");
+                break;
+            }
+
+            case SLICE_DONE: {
+                message.set("The slice process for object " + fileName + " has just finished! We are ready to print :)");
+                break;
+            }
+
+            case PRINT_STARTED: {
+                message.set("The print task of object " + fileName + " has just started.");
+                break;
+            }
+
+            case PRINT_DONE: {
+                message.set("The print process of object " + fileName + " has just finished");
+                break;
+            }
+        }
+
         DiscordModule.getMember(userID).ifPresent(member -> member.getUser().openPrivateChannel().queue(
-                privateChannel -> privateChannel.sendMessage("Hey! Wake up! Your print of file " + fileName + " has just finished!").queue(),
+                privateChannel -> privateChannel.sendMessage(message.get()).queue(),
                 throwable -> {})
         );
     }

@@ -25,6 +25,8 @@ package de.switchprojects.controller.printer.slicer;
 
 import de.switchprojects.controller.printer.api.GlobalAPI;
 import de.switchprojects.controller.printer.queue.object.PrintableObject;
+import de.switchprojects.controller.printer.user.UserManagement;
+import de.switchprojects.controller.printer.user.util.NotifyType;
 import de.switchprojects.controller.printer.util.FileUtils;
 import de.switchprojects.controller.printer.util.Validate;
 import org.jetbrains.annotations.NotNull;
@@ -65,8 +67,18 @@ public final class SliceQueue extends Thread {
         while (!Thread.interrupted()) {
             try {
                 PrintableObject next = QUEUE.takeFirst();
+
+                UserManagement userManagement = GlobalAPI.getUserManagement(next.getUser().getUserType());
+                if (userManagement != null) {
+                    userManagement.notify(NotifyType.SLICE_STARTED, next.getRealFileName(), next.getUser().getUniqueID());
+                }
+
                 ensureSlicerExists();
                 Slice3rSlicer.slice(next);
+
+                if (userManagement != null) {
+                    userManagement.notify(NotifyType.SLICE_DONE, next.getRealFileName(), next.getUser().getUniqueID());
+                }
             } catch (final InterruptedException ex) {
                 ex.printStackTrace();
             }

@@ -28,6 +28,7 @@ import de.switchprojects.controller.printer.database.object.DatabaseObjectToken;
 import de.switchprojects.controller.printer.user.UserManagement;
 import de.switchprojects.controller.printer.user.object.User;
 import de.switchprojects.controller.printer.user.object.UserType;
+import de.switchprojects.controller.printer.user.util.NotifyType;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -62,7 +63,7 @@ public class WebUserManagement implements UserManagement {
     }
 
     @Override
-    public void notifyPrintFinished(@NotNull String fileName, long userID) {
+    public void notify(@NotNull NotifyType notifyType, @NotNull String fileName, long userID) {
     }
 
     @Override

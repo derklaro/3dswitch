@@ -30,6 +30,7 @@ import de.switchprojects.controller.printer.queue.object.PrintableObject;
 import de.switchprojects.controller.printer.ticker.SystemTicker;
 import de.switchprojects.controller.printer.user.UserManagement;
 import de.switchprojects.controller.printer.user.object.UserType;
+import de.switchprojects.controller.printer.user.util.NotifyType;
 import de.switchprojects.controller.printer.util.ThreadSupport;
 import de.switchprojects.controller.printer.util.Validate;
 import org.jetbrains.annotations.NotNull;
@@ -78,7 +79,7 @@ public final class PrintQueue extends Thread {
                             return;
                         }
 
-                        target.notifyPrintFinished(object.getKey(), object.getUserID());
+                        target.notify(NotifyType.PRINT_DONE, object.getKey(), object.getUserID());
                     });
 
                     OctoPrintHelper.deleteFile(SystemTicker.runningJob.getName());
@@ -99,6 +100,13 @@ public final class PrintQueue extends Thread {
                 GlobalAPI.getDatabase().deleteFromTable(next.getTable(), next.getKey());
                 ProgressedDatabaseHelper.handlePrintStart(next);
 
+                UserManagement userManagement = GlobalAPI.getUserManagement(next.getUser().getUserType());
+                if (userManagement == null) {
+                    System.out.println("Started print job successfully, but cannot notify user");
+                    continue;
+                }
+
+                userManagement.notify(NotifyType.PRINT_STARTED, next.getRealFileName(), next.getUser().getUniqueID());
                 System.out.println("Started print job successfully");
             } catch (final InterruptedException ex) {
                 ex.printStackTrace();
