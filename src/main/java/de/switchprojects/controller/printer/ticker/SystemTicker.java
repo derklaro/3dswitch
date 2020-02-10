@@ -23,7 +23,9 @@
  */
 package de.switchprojects.controller.printer.ticker;
 
+import de.switchprojects.controller.printer.api.GlobalAPI;
 import de.switchprojects.controller.printer.octoprint.OctoPrintHelper;
+import de.switchprojects.controller.printer.ticker.event.SystemTickEvent;
 import de.switchprojects.controller.printer.util.ThreadSupport;
 import org.octoprint.api.model.OctoPrintJob;
 
@@ -43,7 +45,7 @@ public final class SystemTicker {
 
     public static OctoPrintJob runningJob;
 
-    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("###.##");
+    public static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("###.##");
 
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("mm:ss");
 
@@ -69,6 +71,8 @@ public final class SystemTicker {
 
             System.out.println("The print job " + currentJob.getName() + " is running!");
             System.out.println("Progress: " + DECIMAL_FORMAT.format(currentJob.getJobProgress().percentComplete()) + "%; " + format(progress));
+
+            GlobalAPI.getEventManager().callEvent(new SystemTickEvent(currentJob));
         }
     }
 

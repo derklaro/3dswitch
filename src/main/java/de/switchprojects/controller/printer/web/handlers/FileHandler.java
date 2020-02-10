@@ -78,5 +78,7 @@ public final class FileHandler implements Handler {
         PrintableObject object = new BasicPrintableObject(user.getUniqueID(), null, user, path);
 
         SliceQueue.queue(object);
+
+        ctx.status(200).result("Added file to slice queue");
     }
 }

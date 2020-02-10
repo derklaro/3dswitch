@@ -24,7 +24,9 @@
 package de.switchprojects.controller.printer.discord;
 
 import de.switchprojects.controller.printer.PrinterController;
+import de.switchprojects.controller.printer.api.GlobalAPI;
 import de.switchprojects.controller.printer.discord.listener.MessageReceivedListener;
+import de.switchprojects.controller.printer.discord.listener.SystemTickerListener;
 import de.switchprojects.controller.printer.discord.user.DiscordUserManagement;
 import de.switchprojects.controller.printer.util.Validate;
 import net.dv8tion.jda.api.AccountType;
@@ -67,6 +69,7 @@ public final class DiscordModule {
             Validate.assertNotNull(guild, "The bot is not in guild 670310948757831690");
 
             PrinterController.getInstance().getUserManagements().add(new DiscordUserManagement());
+            GlobalAPI.getEventManager().registerListener(new SystemTickerListener());
         } catch (final LoginException | InterruptedException ex) {
             ex.printStackTrace();
         }
@@ -90,5 +93,9 @@ public final class DiscordModule {
             jda.shutdownNow();
             jda = null;
         }
+    }
+
+    public static Guild getGuild() {
+        return guild;
     }
 }
