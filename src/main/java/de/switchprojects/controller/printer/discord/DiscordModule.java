@@ -39,6 +39,7 @@ import net.dv8tion.jda.api.entities.User;
 import org.jetbrains.annotations.NotNull;
 
 import javax.security.auth.login.LoginException;
+import java.util.Optional;
 
 /**
  * Represents the discord module which can download the templates from the discord server
@@ -86,6 +87,12 @@ public final class DiscordModule {
         }
 
         return member.getRoles().stream().anyMatch(e -> e.getId().equals("671265328474357780"));
+    }
+
+    @NotNull
+    public static Optional<Member> getMember(long id) {
+        Member member = guild.getMemberById(id);
+        return Optional.ofNullable(member);
     }
 
     public static void close() {

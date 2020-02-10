@@ -25,8 +25,11 @@ package de.switchprojects.controller.printer.queue;
 
 import de.switchprojects.controller.printer.api.GlobalAPI;
 import de.switchprojects.controller.printer.octoprint.OctoPrintHelper;
+import de.switchprojects.controller.printer.progressed.ProgressedDatabaseHelper;
 import de.switchprojects.controller.printer.queue.object.PrintableObject;
 import de.switchprojects.controller.printer.ticker.SystemTicker;
+import de.switchprojects.controller.printer.user.UserManagement;
+import de.switchprojects.controller.printer.user.object.UserType;
 import de.switchprojects.controller.printer.util.ThreadSupport;
 import de.switchprojects.controller.printer.util.Validate;
 import org.jetbrains.annotations.NotNull;
@@ -62,6 +65,24 @@ public final class PrintQueue extends Thread {
                     QUEUE.addFirst(next);
                     ThreadSupport.sleep(TimeUnit.SECONDS, 30);
                     continue;
+                } else if (!OctoPrintHelper.isPrintJobRunning() && SystemTicker.runningJob != null) {
+                    String fileName = SystemTicker.runningJob.getName();
+                    ProgressedDatabaseHelper.getProgressedObjectAndRemove(fileName).ifPresent(object -> {
+                        UserType userType = object.getUserType();
+                        if (userType == null) {
+                            return;
+                        }
+
+                        UserManagement target = GlobalAPI.getUserManagement(userType);
+                        if (target == null) {
+                            return;
+                        }
+
+                        target.notifyPrintFinished(object.getKey(), object.getUserID());
+                    });
+
+                    OctoPrintHelper.deleteFile(SystemTicker.runningJob.getName());
+                    SystemTicker.runningJob = null;
                 }
 
                 if (!GlobalAPI.isReadyForNext()) {
@@ -70,15 +91,14 @@ public final class PrintQueue extends Thread {
                     continue;
                 }
 
-                if (SystemTicker.runningJob != null) {
-                    OctoPrintHelper.deleteFile(SystemTicker.runningJob.getName());
-                    SystemTicker.runningJob = null;
-                }
-
                 System.out.println("Next object polled from queue and ready to print: " + next.getKey());
+
                 OctoPrintHelper.print(next);
                 GlobalAPI.setIsReadyForNext(false);
+
                 GlobalAPI.getDatabase().deleteFromTable(next.getTable(), next.getKey());
+                ProgressedDatabaseHelper.handlePrintStart(next);
+
                 System.out.println("Started print job successfully");
             } catch (final InterruptedException ex) {
                 ex.printStackTrace();

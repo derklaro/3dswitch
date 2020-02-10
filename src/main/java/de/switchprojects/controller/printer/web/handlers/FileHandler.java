@@ -75,7 +75,7 @@ public final class FileHandler implements Handler {
         String path = "files/unsliced/" + System.currentTimeMillis() + "-" + fileName;
 
         FileUtils.copy(Paths.get(path), body);
-        PrintableObject object = new BasicPrintableObject(user.getUniqueID(), null, user, path);
+        PrintableObject object = new BasicPrintableObject(user.getUniqueID(), null, user, path, fileName);
 
         SliceQueue.queue(object);
 

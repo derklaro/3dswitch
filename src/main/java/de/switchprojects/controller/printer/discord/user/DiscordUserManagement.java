@@ -25,6 +25,7 @@ package de.switchprojects.controller.printer.discord.user;
 
 import de.switchprojects.controller.printer.api.GlobalAPI;
 import de.switchprojects.controller.printer.database.object.DatabaseObjectToken;
+import de.switchprojects.controller.printer.discord.DiscordModule;
 import de.switchprojects.controller.printer.user.UserManagement;
 import de.switchprojects.controller.printer.user.object.User;
 import de.switchprojects.controller.printer.user.object.UserType;
@@ -59,6 +60,14 @@ public class DiscordUserManagement implements UserManagement {
     @Override
     public void deleteUser(@NotNull Long userID) {
         GlobalAPI.getDatabase().deleteFromTable(TABLE_NAME, Long.toString(userID));
+    }
+
+    @Override
+    public void notifyPrintFinished(@NotNull String fileName, long userID) {
+        DiscordModule.getMember(userID).ifPresent(member -> member.getUser().openPrivateChannel().queue(
+                privateChannel -> privateChannel.sendMessage("Hey! Wake up! Your print of file " + fileName + " has just finished!").queue(),
+                throwable -> {})
+        );
     }
 
     @Override

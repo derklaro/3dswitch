@@ -62,6 +62,10 @@ public class WebUserManagement implements UserManagement {
     }
 
     @Override
+    public void notifyPrintFinished(@NotNull String fileName, long userID) {
+    }
+
+    @Override
     public @NotNull UserType getHandlingType() {
         return UserType.WEB;
     }

@@ -59,6 +59,14 @@ public interface UserManagement {
     void deleteUser(@NotNull Long userID);
 
     /**
+     * Notifies the user that the current print job is done
+     *
+     * @param fileName The name of the printed file
+     * @param userID   The id of the user which gave the task
+     */
+    void notifyPrintFinished(@NotNull String fileName, long userID);
+
+    /**
      * @return The type of user which this manager is handling
      */
     @NotNull

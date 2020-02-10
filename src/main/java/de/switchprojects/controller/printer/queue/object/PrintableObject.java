@@ -48,10 +48,11 @@ public abstract class PrintableObject implements DatabaseObject {
             Long requestTime = inputStream.readLong();
             String path = inputStream.readUTF();
             Boolean sliced = inputStream.readBoolean();
+            String realName = inputStream.readUTF();
 
             User user = (User) inputStream.readObject();
 
-            return new BasicPrintableObject(requestTime, userID, user, sliced, path);
+            return new BasicPrintableObject(requestTime, userID, user, sliced, path, realName);
         } catch (final IOException | ClassNotFoundException ex) {
             ex.printStackTrace();
         }
@@ -76,6 +77,12 @@ public abstract class PrintableObject implements DatabaseObject {
      */
     @NotNull
     public abstract String getPath();
+
+    /**
+     * @return The file which the user gave before the rename for the system internal stuff
+     */
+    @NotNull
+    public abstract String getRealFileName();
 
     /**
      * Changes the path of the file location (for example after the slice)

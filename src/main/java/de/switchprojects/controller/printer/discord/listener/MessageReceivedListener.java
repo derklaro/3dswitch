@@ -85,7 +85,7 @@ public final class MessageReceivedListener extends ListenerAdapter {
             String path = "files/unsliced/" + System.currentTimeMillis() + "-" + attachment.getFileName();
 
             FileUtils.copy(stream, Paths.get(path));
-            PrintableObject object = new BasicPrintableObject(user.getUniqueID(), null, user, path);
+            PrintableObject object = new BasicPrintableObject(user.getUniqueID(), null, user, path, attachment.getFileName());
 
             SliceQueue.queue(object);
 

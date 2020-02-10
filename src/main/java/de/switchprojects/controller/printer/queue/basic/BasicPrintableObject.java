@@ -40,20 +40,22 @@ import java.io.ObjectOutputStream;
  */
 public class BasicPrintableObject extends PrintableObject {
 
-    public BasicPrintableObject(Long userID, Long time, User user, String path) {
+    public BasicPrintableObject(Long userID, Long time, User user, String path, String realName) {
         super(time == null ? System.currentTimeMillis() : time);
         this.userID = userID;
         this.user = user;
         this.sliced = false;
         this.path = path;
+        this.realName = realName;
     }
 
-    public BasicPrintableObject(Long requestTime, Long userID, User user, boolean sliced, String path) {
+    public BasicPrintableObject(Long requestTime, Long userID, User user, boolean sliced, String path, String realName) {
         super(requestTime);
         this.userID = userID;
         this.user = user;
         this.sliced = sliced;
         this.path = path;
+        this.realName = realName;
     }
 
     private final Long userID;
@@ -64,6 +66,8 @@ public class BasicPrintableObject extends PrintableObject {
 
     private String path;
 
+    private final String realName;
+
     @Override
     public @NotNull User getUser() {
         return this.user;
@@ -72,6 +76,11 @@ public class BasicPrintableObject extends PrintableObject {
     @Override
     public @NotNull String getPath() {
         return this.path;
+    }
+
+    @Override
+    public @NotNull String getRealFileName() {
+        return this.realName;
     }
 
     @Override
@@ -108,6 +117,7 @@ public class BasicPrintableObject extends PrintableObject {
             objectOutputStream.writeLong(getRequestTime());
             objectOutputStream.writeUTF(this.path);
             objectOutputStream.writeBoolean(this.sliced);
+            objectOutputStream.writeUTF(this.realName);
 
             objectOutputStream.writeObject(this.user);
 
