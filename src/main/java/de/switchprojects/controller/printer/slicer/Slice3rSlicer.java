@@ -54,13 +54,19 @@ public final class Slice3rSlicer {
         String objectPath = Paths.get(object.getPath()).toFile().getAbsolutePath();
         File file = new File("slicer/prusa-slicer-console.exe").getAbsoluteFile();
 
+        String outFile = objectPath;
+        int last = objectPath.lastIndexOf('.');
+        if (last != -1) {
+            outFile = objectPath.substring(0, last) + ".gcode";
+        }
+
         String[] command = new String[]{
                 file.getAbsolutePath(),
                 "-g",
                 "--load",
                 "switch.ini",
                 "-o",
-                objectPath + ".gcode",
+                outFile,
                 objectPath
         };
 
@@ -74,7 +80,7 @@ public final class Slice3rSlicer {
 
             FileUtils.deleteIfExists(object.getPath());
 
-            object.setPath(object.getPath() + ".gcode");
+            object.setPath(outFile);
             object.setSliced(true);
             GlobalAPI.getDatabase().update(object);
 

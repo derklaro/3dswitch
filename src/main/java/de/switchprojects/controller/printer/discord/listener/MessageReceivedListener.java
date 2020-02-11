@@ -55,6 +55,10 @@ public final class MessageReceivedListener extends ListenerAdapter {
 
     @Override
     public void onPrivateMessageReceived(@Nonnull PrivateMessageReceivedEvent event) {
+        if (event.getAuthor().getId().equals(DiscordModule.getJda().getSelfUser().getId())) {
+            return;
+        }
+
         if (event.getMessage().getAttachments().size() != 1) {
             event.getChannel().sendMessage("Please add one attachment which is an unsliced 3D-File (allowed: \"*.stl\" or \"*.obj\"").queue();
             return;

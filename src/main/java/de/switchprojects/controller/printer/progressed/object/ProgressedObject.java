@@ -30,10 +30,7 @@ import de.switchprojects.controller.printer.user.object.UserType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.util.Arrays;
 import java.util.function.Function;
 
@@ -45,7 +42,11 @@ public class ProgressedObject implements DatabaseObject {
 
     public static final Function<ObjectInputStream, ProgressedObject> MAPPER = stream -> {
         try {
-            return new ProgressedObject(stream.readUTF(), stream.readLong(), stream.readUTF());
+            String realFileName = stream.readUTF();
+            String userType = stream.readUTF();
+            long id = stream.readLong();
+
+            return new ProgressedObject("empty", realFileName, id, userType);
         } catch (final IOException ex) {
             ex.printStackTrace();
         }
@@ -54,18 +55,22 @@ public class ProgressedObject implements DatabaseObject {
     };
 
     public ProgressedObject(@NotNull PrintableObject parent) {
-        this.key = parent.getRealFileName();
+        this.key = new File(parent.getPath()).getName();
+        this.realFileName = parent.getRealFileName();
         this.userID = parent.getUser().getUniqueID();
         this.userType = parent.getUser().getUserType().name();
     }
 
-    private ProgressedObject(String key, long userID, String userType) {
+    private ProgressedObject(String key, String realFileName, long userID, String userType) {
         this.key = key;
+        this.realFileName = realFileName;
         this.userID = userID;
         this.userType = userType;
     }
 
     private final String key;
+
+    private final String realFileName;
 
     private final long userID;
 
@@ -90,13 +95,20 @@ public class ProgressedObject implements DatabaseObject {
         return Arrays.stream(UserType.values()).filter(e -> e.name().equalsIgnoreCase(this.userType)).findFirst().orElse(null);
     }
 
+    @NotNull
+    public String getRealFileName() {
+        return realFileName;
+    }
+
     @Override
     public @NotNull byte[] serialize() {
         try (ByteArrayOutputStream stream = new ByteArrayOutputStream();
              ObjectOutputStream objectOutputStream = new ObjectOutputStream(stream)) {
-            objectOutputStream.writeUTF(this.key);
-            objectOutputStream.writeLong(this.userID);
+            objectOutputStream.writeUTF(this.realFileName);
             objectOutputStream.writeUTF(this.userType);
+            objectOutputStream.writeLong(this.userID);
+
+            objectOutputStream.writeObject(null);
 
             return stream.toByteArray();
         } catch (final IOException ex) {

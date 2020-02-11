@@ -35,6 +35,7 @@ import de.switchprojects.controller.printer.util.ThreadSupport;
 import de.switchprojects.controller.printer.util.Validate;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
@@ -60,13 +61,16 @@ public final class PrintQueue extends Thread {
     public void run() {
         while (!Thread.interrupted()) {
             try {
-                PrintableObject next = QUEUE.takeFirst();
+                PrintableObject next = QUEUE.poll(10, TimeUnit.SECONDS);
 
                 if (OctoPrintHelper.isPrintJobRunning()) {
-                    QUEUE.addFirst(next);
-                    ThreadSupport.sleep(TimeUnit.SECONDS, 30);
+                    if (next != null) {
+                        QUEUE.addFirst(next);
+                    }
+
+                    ThreadSupport.sleep(TimeUnit.SECONDS, 10);
                     continue;
-                } else if (!OctoPrintHelper.isPrintJobRunning() && SystemTicker.runningJob != null) {
+                } else if (!OctoPrintHelper.isPrintJobRunning() && SystemTicker.runningJob != null && SystemTicker.runningJob.getJobProgress() != null) {
                     String fileName = SystemTicker.runningJob.getName();
                     ProgressedDatabaseHelper.getProgressedObjectAndRemove(fileName).ifPresent(object -> {
                         UserType userType = object.getUserType();
@@ -79,7 +83,7 @@ public final class PrintQueue extends Thread {
                             return;
                         }
 
-                        target.notify(NotifyType.PRINT_DONE, object.getKey(), object.getUserID());
+                        target.notify(NotifyType.PRINT_DONE, object.getRealFileName(), object.getUserID());
                     });
 
                     OctoPrintHelper.deleteFile(SystemTicker.runningJob.getName());
@@ -87,8 +91,15 @@ public final class PrintQueue extends Thread {
                 }
 
                 if (!GlobalAPI.isReadyForNext()) {
-                    QUEUE.addFirst(next);
+                    if (next != null) {
+                        QUEUE.addFirst(next);
+                    }
+
                     ThreadSupport.sleep(TimeUnit.SECONDS, 10);
+                    continue;
+                }
+
+                if (next == null) {
                     continue;
                 }
 

@@ -95,7 +95,7 @@ public final class SliceQueue extends Thread {
         FileUtils.createDirectories(file.toPath());
 
         try (InputStream stream = SliceQueue.class.getClassLoader().getResourceAsStream("internal-slicer.zip")) {
-            Validate.assertNotNull(stream, "The internal-slicer.zip is not build in. Custom build?");
+            Validate.assertNotNull(stream, "The internal-internal-slicer.zip is not build in. Custom build?");
             FileUtils.unzip(stream, "slicer");
         } catch (final IOException ex) {
             ex.printStackTrace();
